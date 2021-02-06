@@ -1,10 +1,12 @@
 import json
+import re
 from typing import Optional
 
 import requests
 
 BASE_URL = "https://www.duckdns.org/update"
 DNS_RESOLVE_BASE_URL = "https://dns.google/resolve?type=TXT"
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9]+(.duckdns.org)?$")
 
 
 class TXTUpdateError(Exception):
@@ -41,7 +43,10 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        domain = domain.replace(".duckdns.org", "")
+        # remove any wildcard in the domain, because the DuckDNS API does not support wildcard
+        domain = domain.replace("*.", "")
+
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
 
         params = {
             "token": self.token,
@@ -67,7 +72,10 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        domain = domain.replace(".duckdns.org", "")
+        # remove any wildcard in the domain, because the DuckDNS API does not support wildcard
+        domain = domain.replace("*.", "")
+
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
 
         params = {
             "token": self.token,
@@ -91,6 +99,11 @@ class DuckDNSClient:
         """
 
         assert domain is not None and len(domain) > 0
+
+        # remove any wildcard in the domain
+        domain = domain.replace("*.", "")
+
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
 
         params = {
             "name": domain
