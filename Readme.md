@@ -106,7 +106,7 @@ certbot certonly \
   --authenticator dns-duckdns \
   --dns-duckdns-token <your-duckdns-token> \
   --dns-duckdns-propagation-seconds 60 \
-  -d "*.example.duckdns.org"
+  -d "example.duckdns.org"
 ```
 
 Generate a staging certificate (i.e. temporary testing certificate) for a DNS-01 challenge of the domain "
@@ -121,7 +121,7 @@ certbot certonly \
   --authenticator dns-duckdns \
   --dns-duckdns-token <your-duckdns-token> \
   --dns-duckdns-propagation-seconds 60 \
-  -d "*.example.duckdns.org" \
+  -d "example.duckdns.org" \
   --dry-run
 ```
 
