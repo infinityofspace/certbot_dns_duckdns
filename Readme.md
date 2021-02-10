@@ -27,18 +27,20 @@ a DuckDNS domain. The plugin takes care of setting and deleting the TXT entry vi
 
 ### Installation
 
+This project requires Python 3 to be installed.
+
 #### With pip (recommend)
 
 Use the following command to install *certbot_dns_duckdns* with pip:
 
 ```commandline
-pip3 install certbot_dns_duckdns
+pip install certbot_dns_duckdns
 ```
 
 You can also very easily update to a newer version:
 
 ```commandline
-pip3 install certbot_dns_duckdns -U
+pip install certbot_dns_duckdns -U
 ```
 
 #### From source
@@ -54,8 +56,9 @@ pip install .
 Make sure before you start that you have a current version of *certbot* installed. You can read how to install *certbot*
 in the [official documentation](https://certbot.eff.org/docs/install.html).
 
-Note: Normally, the PYPI version of *certbot* is installed with the installation of *certbot_dns_duckdns*
-and does not require any further installation or configuration.
+*Note: Normally, the PYPI version of *certbot* is installed with the installation of *certbot_dns_duckdns*
+and does not require any further installation or configuration. However, you may need a customized installation for your
+use case, check the official documentation for that*
 
 You can check if *certbot* is installed with:
 
@@ -122,11 +125,11 @@ certbot certonly \
   --dns-duckdns-token <your-duckdns-token> \
   --dns-duckdns-propagation-seconds 60 \
   -d "example.duckdns.org" \
-  --dry-run
+  --staging
 ```
 
 You can find al list of all available cli options in
-the [official documentation](#https://certbot.eff.org/docs/using.html#certbot-command-line-options) of *certbot*.
+the [official documentation](https://certbot.eff.org/docs/using.html#certbot-command-line-options) of *certbot*.
 
 ### Third party notices
 
