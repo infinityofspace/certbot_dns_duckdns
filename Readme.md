@@ -12,9 +12,13 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
 
 1. [About](#about)
 2. [Installation](#installation)
-    1. [With pip (recommend)](#with-pip-recommend)
-    2. [From source](#from-source)
+    1. [Prerequirements](#prerequirements)
+    2. [With pip (recommend)](#with-pip-recommend)
+    3. [From source](#from-source)
+    4. [Docker installation](#docker-installation)
 3. [Usage](#usage)
+    1. [Local installation usage](#local-installation-usage)
+    2. [Docker usage](#docker-usage)
 4. [Third party notices](#third-party-notices)
 5. [License](#license)
 
@@ -27,7 +31,27 @@ a DuckDNS domain. The plugin takes care of setting and deleting the TXT entry vi
 
 ### Installation
 
-This project requires Python 3 to be installed.
+#### Prerequirements
+
+*If you want to use the docker image, then you don't need any requirements other than a docker installation and can
+proceed directly to the [installation](#docker-installation)*
+
+You need at least version 3.6 of Python installed. If you want to install this plugin with pip, then you also need pip3
+installed.
+
+If you already have *certbot* installed, make sure you have at least version 1.1.0 installed.
+
+You can check what version of *certbot* is installed with this command:
+
+```commandline
+certbot --version
+```
+
+If you don't have certbot installed yet, then the PyPI version of certbot will be installed automatically during the
+installation.
+
+**Note: If you want to run certbot with root privileges, then you need to install the plugin with root privileges too.
+Otherwise certbot cannot find the plugin.**
 
 #### With pip (recommend)
 
@@ -51,22 +75,35 @@ cd certbot_dns_duckdns
 pip install .
 ```
 
-### Usage
+#### Docker installation
 
-Make sure before you start that you have a current version of *certbot* installed. You can read how to install *certbot*
-in the [official documentation](https://certbot.eff.org/docs/install.html).
-
-*Note: Normally, the PYPI version of *certbot* is installed with the installation of *certbot_dns_duckdns*
-and does not require any further installation or configuration. However, you may need a customized installation for your
-use case, check the official documentation for that*
-
-You can check if *certbot* is installed with:
+You can also simply use the plugin with docker. You just have to clone the project with git first:
 
 ```commandline
-certbot --version
+git clone https://github.com/infinityofspace/certbot_dns_duckdns
+```
+
+Now build a local Docker image:
+
+```commandline
+cd certbot_dns_duckdns
+docker build -t certbot_dns_duckdns:v0.3 .
+```
+
+You are now done and can proceed to the [usage description](#docker-usage) of the plugin with docker.
+
+### Usage
+
+#### Local installation usage
+
+To check if the plugin is installed correctly and detected properly by certbot, you can use the following command:
+
+```commandline
+certbot plugins
 ```
 
 ---
+
 Below are some examples of how to use the plugin:
 
 Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org":
@@ -128,8 +165,34 @@ certbot certonly \
   --staging
 ```
 
-You can find al list of all available cli options in
+You can find al list of all available certbot cli options in
 the [official documentation](https://certbot.eff.org/docs/using.html#certbot-command-line-options) of *certbot*.
+
+#### Docker usage
+
+Please make sure that you have completed [the installation](#installation).
+
+You can start the container to obtain a new certificate:
+
+```commandline
+docker run \
+-e DOMAIN="<your-full-duckdns-domain>" \
+-e EMAIL="<your-email>" \
+-e DUCKDNS_TOKEN="<your-duckdns-token>" \
+certbot_dns_duckdns:v0.3
+```
+
+You have the following options
+
+| environment variable | description | required |
+|:--------------------:|:-----------:|:--------:|
+| DOMAIN | The DuckDNS domain for which you want to get the certificate | yes |
+| DUCKDNS_TOKEN | Your DuckDNS API Token | yes |
+| EMAIL | Your email address with which the Letsencrypt account should be created.<br>If it is not specified, then no account will be created.  | no |
+| STAGING | Use the staging environment of Letsencrypt. Default value is false | no |
+| AUTORENEW | Renew the certificate automatically. Default value is false | no |
+| RECREATE | Delete all previous certificate data data. Default value is false | no |
+| ADDITIONAL_CERTBOT_ARGS | A string with additional certbot arguments.<br>For example: "--deploy-hook ./hooks/my_cert_hook.sh" | no |
 
 ### Third party notices
 
