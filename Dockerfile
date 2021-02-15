@@ -1,4 +1,7 @@
-FROM certbot/certbot:v1.12.0
+FROM alpine:3.13
+
+RUN apk update
+RUN apk add --no-cache certbot python3 py3-pip
 
 WORKDIR /
 
@@ -13,4 +16,4 @@ COPY cron/crontab /crontabs
 
 ENV DEFAULT_LOG_FILE=/var/log/letsencrypt/certbot.log
 
-ENTRYPOINT ["sh", "/scripts/startup.sh"]
+ENTRYPOINT ["sh", "/scripts/certbot.sh"]

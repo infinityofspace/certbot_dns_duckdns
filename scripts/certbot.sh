@@ -2,8 +2,9 @@
 
 DOMAIN="${DOMAIN:-""}"
 DUCKDNS_TOKEN="${DUCKDNS_TOKEN:-""}"
-PROPAGATION_SECONDS="${PROPAGATION_SECONDS:-""}"
+PROPAGATION_SECONDS="${PROPAGATION_SECONDS:-60}"
 EMAIL="${EMAIL:-""}"
+AUTORENEW="${AUTORENEW:-false}"
 STAGING="${STAGING:-false}"
 RECREATE="${RECREATE:-false}"
 LOG_FILE="${LOG_FILE:-${DEFAULT_LOG_FILE}}"
@@ -68,5 +69,13 @@ if [ "$DOMAIN" != "" ] && [ "$DUCKDNS_TOKEN" != "" ]; then
     echo_and_log "$certbot_res"
   fi
 else
-  echo_and_log_err "ERROR: domain or DuckDNS token not found"
+  echo_and_log_err "ERROR: domain or DuckDNS token not specified"
+  exit 1
 fi
+
+if [ "$AUTORENEW" = true ]; then
+  crontab /crontabs/crontab
+  exec crond -f
+fi
+
+exit 0
