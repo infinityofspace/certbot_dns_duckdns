@@ -32,7 +32,7 @@ setup(
     install_requires=[
         "setuptools>=39.0.1",
         "zope.interface>=5.0.0",
-        "certbot>=1.1.0",
+        "certbot>=1.7.0",
         "requests>=2.20.0"
     ],
     entry_points={
