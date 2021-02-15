@@ -1,9 +1,8 @@
-name: Publish distribution to PyPI
+name: Publish release distribution to PyPI
 
 on:
-  push:
-    tags:
-      - v*
+  release:
+    types: [ released ]
 
 jobs:
   build:
