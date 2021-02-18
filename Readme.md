@@ -179,6 +179,8 @@ docker run \
 infinityofspace/certbot_dns_duckdns:stable
 ```
 
+You can find an example docker compose file [here](docker/docker-compose.yml).
+
 There are the following environment variables:
 
 | environment variable | description | required |
