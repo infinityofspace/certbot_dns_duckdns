@@ -7,14 +7,12 @@ EMAIL="${EMAIL:-""}"
 AUTORENEW="${AUTORENEW:-false}"
 STAGING="${STAGING:-false}"
 RECREATE="${RECREATE:-false}"
-LOG_FILE="${LOG_FILE:-${DEFAULT_LOG_FILE}}"
 ADDITIONAL_CERTBOT_ARGS="${ADDITIONAL_CERTBOT_ARGS:-""}"
 
 CERTBOT_COMMAND="certbot certonly --non-interactive --agree-tos --preferred-challenges dns --authenticator dns-duckdns"
+LOG_FILE="/var/log/letsencrypt/certbot.log"
 
 seven_days_s=$((60 * 60 * 24 * 7))
-
-mkdir -p "/var/log/letsencrypt/"
 
 echo_and_log() {
   echo "$1" | tee -a "$LOG_FILE"
@@ -30,6 +28,8 @@ if [ "$RECREATE" = true ]; then
   rm -rf /var/log/letsencrypt
   echo "INFO: deleted all existing certificate data"
 fi
+
+mkdir -p "/var/log/letsencrypt/"
 
 if [ "$DOMAIN" != "" ] && [ "$DUCKDNS_TOKEN" != "" ]; then
   # remove possible wildcard from domain

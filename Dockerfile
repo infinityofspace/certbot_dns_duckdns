@@ -12,8 +12,6 @@ RUN pip install .
 COPY scripts/ /scripts/
 RUN chmod -R +x /scripts/
 
-COPY cron/crontab /crontabs
-
-ENV DEFAULT_LOG_FILE=/var/log/letsencrypt/certbot.log
+COPY cron/crontab /crontabs/crontab
 
 ENTRYPOINT ["sh", "/scripts/certbot.sh"]
