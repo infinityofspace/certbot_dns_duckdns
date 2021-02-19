@@ -2,7 +2,7 @@ version: "3"
 
 services:
   certbot:
-    image: "certbot_dns_duckdns:stable"
+    image: "certbot_dns_duckdns:latest"
     container_name: "certbot_dns_duckdns"
     environment:
       - "DOMAIN=<your-full-duckdns-domain>"

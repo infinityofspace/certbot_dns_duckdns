@@ -39,7 +39,7 @@ can proceed directly to the [usage](#docker-usage)*
 If you prefer the local installation, then you need at least version 3.6 of Python installed. If you want to install
 this plugin with pip, then you also need pip3 installed.
 
-If you already have *certbot* installed, make sure you have at least version 1.1.0 installed.
+If you already have *certbot* installed, make sure you have at least version 1.7.0 installed.
 
 You can check what version of *certbot* is installed with this command:
 
@@ -161,7 +161,7 @@ docker run \
 -e DOMAIN="<your-full-duckdns-domain>" \
 -e DUCKDNS_TOKEN="<your-duckdns-token>" \
 -v mycerts:/etc/letsencrypt \
-infinityofspace/certbot_dns_duckdns:stable
+infinityofspace/certbot_dns_duckdns:latest
 ```
 
 You will find the certificate after a moment in the folder "mycerts" on your host system in the current execution
@@ -176,7 +176,7 @@ docker run \
 -e DUCKDNS_TOKEN="<your-duckdns-token>" \
 -e AUTORENEW=true \
 -v mycerts:/etc/letsencrypt \
-infinityofspace/certbot_dns_duckdns:stable
+infinityofspace/certbot_dns_duckdns:latest
 ```
 
 You can find an example docker compose file [here](docker/docker-compose.yml).
