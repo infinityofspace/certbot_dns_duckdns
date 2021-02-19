@@ -160,7 +160,7 @@ docker run \
 -e EMAIL="<your-email>" \
 -e DOMAIN="<your-full-duckdns-domain>" \
 -e DUCKDNS_TOKEN="<your-duckdns-token>" \
--v mycerts/:/etc/letsencrypt \
+-v mycerts:/etc/letsencrypt \
 infinityofspace/certbot_dns_duckdns:stable
 ```
 
@@ -175,7 +175,7 @@ docker run \
 -e DOMAIN="<your-full-duckdns-domain>" \
 -e DUCKDNS_TOKEN="<your-duckdns-token>" \
 -e AUTORENEW=true \
--v mycerts/:/etc/letsencrypt \
+-v mycerts:/etc/letsencrypt \
 infinityofspace/certbot_dns_duckdns:stable
 ```
 
