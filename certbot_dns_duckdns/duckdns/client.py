@@ -43,14 +43,15 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        # remove any wildcard in the domain, because the DuckDNS API does not support wildcard
-        domain = domain.replace("*.", "")
+        # get the root domain with the first subdomain
+        domain_parts = domain.split(".")
+        root_domain = ".".join(domain_parts[-3:])
 
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
 
         params = {
             "token": self.token,
-            "domains": domain,
+            "domains": root_domain,
             "txt": txt
         }
         r = requests.get(url=BASE_URL, params=params)
@@ -72,14 +73,15 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        # remove any wildcard in the domain, because the DuckDNS API does not support wildcard
-        domain = domain.replace("*.", "")
+        # get the root domain with the first subdomain
+        domain_parts = domain.split(".")
+        root_domain = ".".join(domain_parts[-3:])
 
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
 
         params = {
             "token": self.token,
-            "domains": domain,
+            "domains": root_domain,
             "txt": "",
             "clear": "true"
         }
@@ -100,10 +102,11 @@ class DuckDNSClient:
 
         assert domain is not None and len(domain) > 0
 
-        # remove any wildcard in the domain
-        domain = domain.replace("*.", "")
+        # get the root domain with the first subdomain
+        domain_parts = domain.split(".")
+        root_domain = ".".join(domain_parts[-3:])
 
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(domain)
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
 
         params = {
             "name": domain
