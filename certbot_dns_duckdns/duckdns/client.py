@@ -6,7 +6,7 @@ import requests
 
 BASE_URL = "https://www.duckdns.org/update"
 DNS_RESOLVE_BASE_URL = "https://dns.google/resolve?type=TXT"
-VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9]+(.duckdns.org)?$")
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
 
 
 class TXTUpdateError(Exception):
