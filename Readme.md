@@ -82,6 +82,9 @@ allows one TXT record. If certificates for several domains should be created at 
 distinct DNS TXT records must be created. To solve the problem, you simply have to make a separate certbot call for each
 domain.*
 
+**Note that the certificate generation through Letsencrypt has rate limits. For testing, use the additional
+argument `--staging` to solve this problem.**
+
 #### Local installation usage
 
 To check if the plugin is installed correctly and detected properly by certbot, you can use the following command:
@@ -216,6 +219,7 @@ All modules used by this project are listed below:
 | [requests](https://github.com/psf/requests) | [Apache 2.0](https://raw.githubusercontent.com/psf/requests/master/LICENSE) |
 | [zope.interface](https://github.com/zopefoundation/zope.interface) | [ZPL-2.1](https://raw.githubusercontent.com/zopefoundation/zope.interface/master/LICENSE.txt) |
 | [setuptools](https://github.com/pypa/setuptools) | [MIT](https://raw.githubusercontent.com/pypa/setuptools/main/LICENSE) |
+| [dnspython](https://github.com/rthalley/dnspython) | [ISC](https://raw.githubusercontent.com/rthalley/dnspython/master/LICENSE) |
 
 Furthermore, this readme file contains embeddings of [Shields.io](https://github.com/badges/shields).
 

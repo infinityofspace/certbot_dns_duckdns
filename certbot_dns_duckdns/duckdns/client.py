@@ -1,11 +1,8 @@
-import json
 import re
-from typing import Optional
 
 import requests
 
 BASE_URL = "https://www.duckdns.org/update"
-DNS_RESOLVE_BASE_URL = "https://dns.google/resolve?type=TXT"
 VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
 
 
@@ -43,11 +40,7 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        # get the root domain with the first subdomain
-        domain_parts = domain.split(".")
-        root_domain = ".".join(domain_parts[-3:])
-
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
+        root_domain = self.__get_validated_root_domain__(domain)
 
         params = {
             "token": self.token,
@@ -61,6 +54,15 @@ class DuckDNSClient:
                                  "Request status code: {}\n"
                                  "Request response text: {}".format(txt, domain, r.status_code, r.text))
 
+    @staticmethod
+    def __get_validated_root_domain__(domain):
+        # get the root domain with the first subdomain
+        domain_parts = domain.split(".")
+        root_domain = ".".join(domain_parts[-3:])
+        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
+
+        return root_domain
+
     def clear_txt_record(self, domain: str) -> None:
         """
         Clear the TXT record for a specific DuckDNS domain.
@@ -73,11 +75,7 @@ class DuckDNSClient:
         assert self.token is not None and len(self.token) > 0
         assert domain is not None and len(domain) > 0
 
-        # get the root domain with the first subdomain
-        domain_parts = domain.split(".")
-        root_domain = ".".join(domain_parts[-3:])
-
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
+        root_domain = self.__get_validated_root_domain__(domain)
 
         params = {
             "token": self.token,
@@ -91,32 +89,3 @@ class DuckDNSClient:
             raise TXTUpdateError("The clearing of the TXT record for domain \"{}\" was not successful.\n"
                                  "Request status code: {}\n"
                                  "Request response text: {}".format(domain, r.status_code, r.text))
-
-    def get_txt_record(self, domain: str) -> Optional[str]:
-        """
-        Get the TXT record for a specific domain from the Google DNS Resolver API.
-
-        :param domain: the full domain for which the TXT entry should be retrieved
-        :return: the TXT record data or None if there is no such value
-        """
-
-        assert domain is not None and len(domain) > 0
-
-        # get the root domain with the first subdomain
-        domain_parts = domain.split(".")
-        root_domain = ".".join(domain_parts[-3:])
-
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
-
-        params = {
-            "name": domain
-        }
-        r = requests.get(url=DNS_RESOLVE_BASE_URL, params=params)
-
-        res_json = json.loads(r.text)
-        answer = res_json.get("Answer", None)
-        if answer is not None and isinstance(answer, list) and len(answer) > 0:
-            txt = answer[0].get("data", None)
-            if txt is not None:
-                # remove the quotation marks from the txt value
-                return txt.replace("\"", "")

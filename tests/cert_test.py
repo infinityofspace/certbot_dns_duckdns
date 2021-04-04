@@ -12,61 +12,61 @@ import unittest
 
 from certbot.errors import PluginError
 
-from cert.client import Authenticator
+from certbot_dns_duckdns.cert.client import Authenticator
 
-DOMAIN = os.environ.get("TEST_DOMAIN")
-DUCKDNS_TOKEN = os.environ.get("TEST_DUCKDNS_TOKEN")
+TEST_DOMAIN = os.environ.get("TEST_DOMAIN")
+TEST_DUCKDNS_TOKEN = os.environ.get("TEST_DUCKDNS_TOKEN")
 
 
 class CertbotPluginTests(unittest.TestCase):
 
     def test_invalid_token(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
         class TestConfig(object):
             test42_token = "securetoken42"
 
         auth = Authenticator(config=TestConfig(), name="test42")
         with self.assertRaises(PluginError):
-            auth._perform(domain=DOMAIN, validation_name="test=42", validation="42")
+            auth._perform(domain=TEST_DOMAIN, validation_name="test=42", validation="42")
 
     def test_empty_token(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
         class TestConfig(object):
             test42_token = ""
 
         auth = Authenticator(config=TestConfig(), name="test42")
         with self.assertRaises(PluginError):
-            auth._perform(domain=DOMAIN, validation_name="test=42", validation="42")
+            auth._perform(domain=TEST_DOMAIN, validation_name="test=42", validation="42")
 
     def test_none_token(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
         class TestConfig(object):
             test42_token = None
 
         auth = Authenticator(config=TestConfig(), name="test42")
         with self.assertRaises(PluginError):
-            auth._perform(domain=DOMAIN, validation_name="test=42", validation="42")
+            auth._perform(domain=TEST_DOMAIN, validation_name="test=42", validation="42")
 
     def test_invalid_domain(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
         class TestConfig(object):
-            test42_token = DUCKDNS_TOKEN
+            test42_token = TEST_DUCKDNS_TOKEN
 
         auth = Authenticator(config=TestConfig(), name="test42")
         with self.assertRaises(PluginError):
             auth._perform(domain="thisdomainsisnotvalid", validation_name="test=42", validation="42")
 
     def test_certificate(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
         # check if certbot is installed
         subprocess.check_output(["certbot", "--version"])
@@ -81,12 +81,12 @@ class CertbotPluginTests(unittest.TestCase):
                                  "--authenticator",
                                  "dns-duckdns",
                                  "--dns-duckdns-token",
-                                 DUCKDNS_TOKEN,
+                                 TEST_DUCKDNS_TOKEN,
                                  "--dns-duckdns-propagation-seconds",
                                  "60",
-                                 "--dry-run",
+                                 "--staging",
                                  "-d",
-                                 DOMAIN,
+                                 TEST_DOMAIN,
                                  # change the output dirs to allow running test without root permission
                                  "--work-dir",
                                  "test_certbot/config",
@@ -96,10 +96,10 @@ class CertbotPluginTests(unittest.TestCase):
                                  "test_certbot/logs"])
 
     def test_wildcard_certificate(self):
-        assert DOMAIN is not None and len(DOMAIN) > 0 and DOMAIN[0] not in [".", "*"]
-        assert DUCKDNS_TOKEN is not None and len(DUCKDNS_TOKEN) > 0
+        assert TEST_DOMAIN is not None and len(TEST_DOMAIN) > 0 and TEST_DOMAIN[0] not in [".", "*"]
+        assert TEST_DUCKDNS_TOKEN is not None and len(TEST_DUCKDNS_TOKEN) > 0
 
-        wildcard_domain = "*.{}".format(DOMAIN)
+        wildcard_domain = "*.{}".format(TEST_DOMAIN)
 
         # check if certbot is installed
         subprocess.check_output(["certbot", "--version"])
@@ -114,10 +114,10 @@ class CertbotPluginTests(unittest.TestCase):
                                  "--authenticator",
                                  "dns-duckdns",
                                  "--dns-duckdns-token",
-                                 DUCKDNS_TOKEN,
+                                 TEST_DUCKDNS_TOKEN,
                                  "--dns-duckdns-propagation-seconds",
                                  "60",
-                                 "--dry-run",
+                                 "--staging",
                                  "-d",
                                  wildcard_domain,
                                  # change the output dirs to allow running test without root permission
