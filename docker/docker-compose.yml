@@ -5,13 +5,16 @@ services:
     image: "certbot_dns_duckdns:latest"
     container_name: "certbot_dns_duckdns"
     environment:
-      - "DOMAIN=<your-full-duckdns-domain>"
-      - "EMAIL=<your-email>"
-      - "DUCKDNS_TOKEN=<your-duckdns-token>"
-      - "PROPAGATION_SECONDS=60"
-      - "STAGING=false"
-      - "AUTORENEW=false"
-      - "RECREATE=false"
+      - CERTBOT_COMMAND=
+        certbot certonly
+        --non-interactive
+        --agree-tos
+        --email <your-email>
+        --preferred-challenges dns
+        --authenticator dns-duckdns
+        --dns-duckdns-token <your-duckdns-token
+        --dns-duckdns-propagation-seconds 30
+        -d <your-full-duckdns-domain>
     volumes:
       - "./data/letsencrypt:/etc/letsencrypt"
       - "./data/logs:/var/log/letsencrypt"

@@ -1,2 +1,0 @@
-# check every day at 3am if the certificates needs a renewal
-0 3 * * * certbot renew >> /var/log/letsencrypt/cron.log 2>&1

@@ -51,7 +51,7 @@ If you don't have certbot installed yet, then the PyPI version of certbot will b
 installation.
 
 **Note: If you want to run certbot with root privileges, then you need to install the plugin with root privileges too.
-Otherwise certbot cannot find the plugin.**
+Otherwise, certbot cannot find the plugin.**
 
 #### With pip (recommend)
 
@@ -77,6 +77,11 @@ pip install .
 
 ### Usage
 
+*Note: You cannot create certificates for multiple DuckDNS domains with one certbot call. This is because DuckDNS only
+allows one TXT record. If certificates for several domains should be created at the same time, then the same number of
+distinct DNS TXT records must be created. To solve the problem, you simply have to make a separate certbot call for each
+domain.*
+
 #### Local installation usage
 
 To check if the plugin is installed correctly and detected properly by certbot, you can use the following command:
@@ -101,6 +106,20 @@ certbot certonly \
   --dns-duckdns-token <your-duckdns-token> \
   --dns-duckdns-propagation-seconds 60 \
   -d "example.duckdns.org"
+```
+
+Generate a certificate for a DNS-01 challenge of the subdomain "cloud.example.duckdns.org":
+
+```commandline
+certbot certonly \
+  --non-interactive \
+  --agree-tos \
+  --email <your-email> \
+  --preferred-challenges dns \
+  --authenticator dns-duckdns \
+  --dns-duckdns-token <your-duckdns-token> \
+  --dns-duckdns-propagation-seconds 60 \
+  -d "cloud.example.duckdns.org"
 ```
 
 Generate a wildcard certificate for a DNS-01 challenge of all subdomains "*.example.duckdns.org":
@@ -148,50 +167,40 @@ certbot certonly \
   --staging
 ```
 
+Try to update all currently generated certificates:
+
+```commandline
+certbot renew
+```
+
 You can find al list of all available certbot cli options in
 the [official documentation](https://certbot.eff.org/docs/using.html#certbot-command-line-options) of *certbot*.
 
 #### Docker usage
 
-You can simply start a new container to obtain a new certificate:
+You can simply start a new container and use the same certbot commands to obtain a new certificate:
 
 ```commandline
-docker run \
--e EMAIL="<your-email>" \
--e DOMAIN="<your-full-duckdns-domain>" \
--e DUCKDNS_TOKEN="<your-duckdns-token>" \
--v mycerts:/etc/letsencrypt \
-infinityofspace/certbot_dns_duckdns:latest
+docker run -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest \
+   certbot certonly \
+     --non-interactive \
+     --agree-tos \
+     --email <your-email> \
+     --preferred-challenges dns \
+     --authenticator dns-duckdns \
+     --dns-duckdns-token <your-duckdns-token> \
+     --dns-duckdns-propagation-seconds 60 \
+     -d "example.duckdns.org"
 ```
 
-You will find the certificate after a moment in the folder "mycerts" on your host system in the current execution
-directory.
+If you want to use the docker image to renew your certificates automatically, you can do this with the host cron, for
+example. For example, use the following expression:
 
-You can also let the certificate renew automatically:
-
-```commandline
-docker run \
--e EMAIL="<your-email>" \
--e DOMAIN="<your-full-duckdns-domain>" \
--e DUCKDNS_TOKEN="<your-duckdns-token>" \
--e AUTORENEW=true \
--v mycerts:/etc/letsencrypt \
-infinityofspace/certbot_dns_duckdns:latest
+```
+0 3 */8 * * docker exec <name-of-your-container> certbot renew
 ```
 
-You can find an example docker compose file [here](docker/docker-compose.yml).
-
-There are the following environment variables:
-
-| environment variable | description | required |
-|:--------------------:|:-----------:|:--------:|
-| DOMAIN | The DuckDNS domain for which you want to get the certificate | yes |
-| DUCKDNS_TOKEN | Your DuckDNS API Token | yes |
-| EMAIL | Your email address with which the Letsencrypt account should be created.<br>If it is not specified, then no account will be created.  | no |
-| STAGING | Use the staging environment of Letsencrypt. Default value is false | no |
-| AUTORENEW | Renew the certificate automatically. Default value is false | no |
-| RECREATE | Delete all previous certificate data data. Default value is false | no |
-| ADDITIONAL_CERTBOT_ARGS | A string with additional certbot arguments.<br>For example: "--deploy-hook ./hooks/my_cert_hook.sh" | no |
+This will attempt to renew expiring certificates every 8 days at 3am.
 
 ### FAQ
 
