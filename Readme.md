@@ -205,6 +205,9 @@ example. For example, use the following expression:
 
 This will attempt to renew expiring certificates every 8 days at 3am.
 
+An example for the usage with docker-compose can be
+found [here](https://github.com/infinityofspace/certbot_dns_duckdns/blob/master/docker/docker-compose.yml).
+
 ### FAQ
 
 You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duckdns/wiki/FAQ).

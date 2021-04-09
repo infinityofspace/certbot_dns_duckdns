@@ -1,20 +1,18 @@
-version: "3"
+version: "3.6"
 
 services:
   certbot:
-    image: "certbot_dns_duckdns:latest"
+    image: "infinityofspace/certbot_dns_duckdns:latest"
     container_name: "certbot_dns_duckdns"
-    environment:
-      - CERTBOT_COMMAND=
-        certbot certonly
-        --non-interactive
-        --agree-tos
-        --email <your-email>
-        --preferred-challenges dns
-        --authenticator dns-duckdns
-        --dns-duckdns-token <your-duckdns-token
-        --dns-duckdns-propagation-seconds 30
-        -d <your-full-duckdns-domain>
     volumes:
       - "./data/letsencrypt:/etc/letsencrypt"
       - "./data/logs:/var/log/letsencrypt"
+    command: certbot certonly
+      --non-interactive
+      --agree-tos
+      --email <your-email>
+      --preferred-challenges dns
+      --authenticator dns-duckdns
+      --dns-duckdns-token <your-duckdns-token>
+      --dns-duckdns-propagation-seconds 30
+      -d <your-full-duckdns-domain>
