@@ -1,0 +1,27 @@
+version: "3.6"
+
+services:
+  certbot:
+    image: "infinityofspace/certbot_dns_duckdns:latest"
+    container_name: "certbot_dns_duckdns"
+    volumes:
+      - "./data/letsencrypt:/etc/letsencrypt"
+      - "./data/logs:/var/log/letsencrypt"
+    command: certbot certonly
+      --non-interactive
+      --agree-tos
+      --email <your-email>
+      --preferred-challenges dns
+      --authenticator dns-duckdns
+      --dns-duckdns-token <your-duckdns-token>
+      --dns-duckdns-propagation-seconds 30
+      -d <your-full-duckdns-domain>
+
+  certbot_cron:
+    build: .
+    container_name: "certbot_cron"
+    restart: unless-stopped
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - CERTBOT_CONTAINER_NAME=certbot_dns_duckdns

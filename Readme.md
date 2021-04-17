@@ -197,9 +197,9 @@ docker run -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/
 ```
 
 If you want to use the docker image to renew your certificates automatically, you can do this with the host cron, for
-example.
-To use this example you must have crontab and cron installed beforehand. Note that depending on the installation you may need to use the crontab of a root user to access the docker deamon or file directories.
-For example, use the following crontab expression:
+example. To use this example you must have crontab and cron installed beforehand. Note that depending on the
+installation you may need to use the crontab of a root user to access the docker deamon or file directories. For
+example, use the following crontab expression:
 
 ```
 0 3 */8 * * docker run --rm -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest certbot renew
@@ -207,8 +207,7 @@ For example, use the following crontab expression:
 
 This will start an temporary docker container every 8 days at 3am and tries to to renew expiring certificates.
 
-An example for the usage with docker-compose can be
-found [here](https://github.com/infinityofspace/certbot_dns_duckdns/blob/master/docker/docker-compose.yml).
+An example for the usage with docker-compose can be found [here](docker/simple/Readme.md).
 
 ### FAQ
 
@@ -230,4 +229,4 @@ Furthermore, this readme file contains embeddings of [Shields.io](https://github
 
 ### License
 
-[MIT](https://github.com/infinityofspace/certbot_dns_duckdns/blob/master/License) - Copyright (c) 2021 Marvin Heptner
+[MIT](License) - Copyright (c) 2021 Marvin Heptner
