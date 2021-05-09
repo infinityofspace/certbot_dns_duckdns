@@ -77,13 +77,37 @@ pip install .
 
 ### Usage
 
-*Note: You cannot create certificates for multiple DuckDNS domains with one certbot call. This is because DuckDNS only
+_Note: You cannot create certificates for multiple DuckDNS domains with one certbot call. This is because DuckDNS only
 allows one TXT record. If certificates for several domains should be created at the same time, then the same number of
 distinct DNS TXT records must be created. To solve the problem, you simply have to make a separate certbot call for each
-domain.*
+domain._
 
 **Note that the certificate generation through Letsencrypt has rate limits. For testing, use the additional
 argument `--staging` to solve this problem.**
+
+#### Credentials file or cli parameters
+
+You can either use cli parameters to pass authentication information to certbot:
+
+```commandline
+...
+--dns-duckdns-token <your-duckdns-token>
+```
+
+Or to prevent your credentials from showing up in your bash history, you can also create a credentials-file `duckdns.ini` (the name does not matter) with the following content:
+
+```ini
+dns_duckdns_token=<your-duckdns-token>
+```
+
+And then instead of using the `--dns-duckdns-key` parameter above you can use
+
+```commandline
+...
+--dns-duckdns-credentials </path/to/your/duckdns.ini>
+```
+
+You can also mix these usages, though the cli parameters always take precedence over the ini file.
 
 #### Local installation usage
 
@@ -137,6 +161,20 @@ certbot certonly \
   --dns-duckdns-token <your-duckdns-token> \
   --dns-duckdns-propagation-seconds 60 \
   -d "*.example.duckdns.org"
+```
+
+Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org" using a credentials file:
+
+```commandline
+certbot certonly \
+  --non-interactive \
+  --agree-tos \
+  --email <your-email> \
+  --preferred-challenges dns \
+  --authenticator dns-duckdns \
+  --dns-duckdns-credentials </path/to/your/duckdns.ini> \
+  --dns-duckdns-propagation-seconds 60 \
+  -d "example.duckdns.org"
 ```
 
 Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org" without an account (i.e. without an

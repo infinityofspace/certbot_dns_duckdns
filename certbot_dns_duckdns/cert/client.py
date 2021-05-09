@@ -28,7 +28,8 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
 
         super(Authenticator, cls).add_parser_arguments(add, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS)
-        add("token", help="DuckDNS token")
+        add("credentials", help="DuckDNS credentials INI file.")
+        add("token", help="DuckDNS token (overwrites credentials file)")
 
     def more_info(self) -> str:
         """
@@ -39,8 +40,21 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
         return "This plugin configures a DNS TXT record to respond to a DNS-01 challenge using the DuckDNS API."
 
-    def _setup_credentials(self):
-        pass
+    def _setup_credentials(self) -> None:
+        # If token cli param is provided we do not need a credentials file
+        if self.conf("token"):
+            return
+
+        self._configure_file('credentials',
+                             'DuckDNS credentials INI file')
+        dns_common.validate_file_permissions(self.conf('credentials'))
+        self.credentials = self._configure_credentials(
+            "credentials",
+            "DuckDNS credentials INI file",
+            {
+                "token": "DuckDNS token",
+            },
+        )
 
     def _perform(self, domain: str, validation_name: str, validation: str) -> None:
         """
@@ -78,5 +92,6 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         :return: the created DuckDNSClient object
         """
-
-        return DuckDNSClient(self.conf("token"))
+        token = self.conf("token") or self.credentials.conf("token")
+        print("Token:",token)
+        return DuckDNSClient(token)
