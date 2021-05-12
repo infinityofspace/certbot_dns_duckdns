@@ -93,5 +93,4 @@ class Authenticator(dns_common.DNSAuthenticator):
         :return: the created DuckDNSClient object
         """
         token = self.conf("token") or self.credentials.conf("token")
-        print("Token:",token)
         return DuckDNSClient(token)
