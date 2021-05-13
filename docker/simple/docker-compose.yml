@@ -7,7 +7,7 @@ services:
     volumes:
       - "./data/letsencrypt:/etc/letsencrypt"
       - "./data/logs:/var/log/letsencrypt"
-    command: certbot certonly
+    command: certonly
       --non-interactive
       --agree-tos
       --email <your-email>

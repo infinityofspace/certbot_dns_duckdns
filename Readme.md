@@ -94,7 +94,8 @@ You can either use cli parameters to pass authentication information to certbot:
 --dns-duckdns-token <your-duckdns-token>
 ```
 
-Or to prevent your credentials from showing up in your bash history, you can also create a credentials-file `duckdns.ini` (the name does not matter) with the following content:
+Or to prevent your credentials from showing up in your bash history, you can also create a
+credentials-file `duckdns.ini` (the name does not matter) with the following content:
 
 ```ini
 dns_duckdns_token=<your-duckdns-token>
@@ -223,7 +224,7 @@ You can simply start a new container and use the same certbot commands to obtain
 
 ```commandline
 docker run -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest \
-   certbot certonly \
+   certonly \
      --non-interactive \
      --agree-tos \
      --email <your-email> \
@@ -234,16 +235,31 @@ docker run -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/
      -d "example.duckdns.org"
 ```
 
+Or you can use a credentials file:
+
+```commandline
+docker run -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" -v "/absolute/path/to/your/duckdns.ini:/conf/duckdns.ini" infinityofspace/certbot_dns_duckdns:latest \
+   certonly \
+     --non-interactive \
+     --agree-tos \
+     --email <your-email> \
+     --preferred-challenges dns \
+     --authenticator dns-duckdns \
+     --dns-duckdns-credentials /conf/duckdns.ini \
+     --dns-duckdns-propagation-seconds 60 \
+     -d "example.duckdns.org"
+```
+
 If you want to use the docker image to renew your certificates automatically, you can do this with the host cron, for
 example. To use this example you must have crontab and cron installed beforehand. Note that depending on the
-installation you may need to use the crontab of a root user to access the docker deamon or file directories. For
+installation you may need to use the crontab of a root user to access the docker daemon or file directories. For
 example, use the following crontab expression:
 
 ```
 0 3 */8 * * docker run --rm -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest certbot renew
 ```
 
-This will start an temporary docker container every 8 days at 3am and tries to to renew expiring certificates.
+This will start a temporary docker container every 8 days at 3am and tries to renew expiring certificates.
 
 An example for the usage with docker-compose can be found [here](docker/simple/Readme.md).
 
