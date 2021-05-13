@@ -264,3 +264,4 @@ dmypy.json
 
 # Custom rules
 test_certbot
+*.ini
