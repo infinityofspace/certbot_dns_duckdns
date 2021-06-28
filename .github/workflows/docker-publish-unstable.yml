@@ -1,6 +1,7 @@
 name: build and publish unstable to Docker Hub
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
