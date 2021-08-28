@@ -1,0 +1,2 @@
+requests>=2.20.0
+zope.interface>=5.0.0

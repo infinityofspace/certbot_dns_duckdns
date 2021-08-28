@@ -242,3 +242,5 @@ fabric.properties
 # Custom rules
 .github
 docker
+snap
+*.snap

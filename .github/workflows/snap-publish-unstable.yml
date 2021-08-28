@@ -1,0 +1,24 @@
+name: snap unstable
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+
+      - name: build snap
+        uses: snapcore/action-build@v1
+
+      - name: publish snap
+        uses: snapcore/action-publish@v1
+        with:
+          store_login: ${{ secrets.SNAP_LOGIN }}
+          snap: ${{ steps.build.outputs.snap }}
+          release: edge
