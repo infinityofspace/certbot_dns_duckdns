@@ -1,6 +1,7 @@
 name: snap release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - "v*"

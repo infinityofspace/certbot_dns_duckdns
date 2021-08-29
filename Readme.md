@@ -15,6 +15,7 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
     1. [Prerequirements](#prerequirements)
     2. [With pip (recommend)](#with-pip-recommend)
     3. [From source](#from-source)
+    4. [Snap](#snap)
 3. [Usage](#usage)
     1. [Local installation usage](#local-installation-usage)
     2. [Docker usage](#docker-usage)
@@ -39,7 +40,8 @@ can proceed directly to the [usage](#docker-usage)*
 If you prefer the local installation, then you need at least version 3.6 of Python installed. If you want to install
 this plugin with pip, then you also need pip3 installed.
 
-If you already have *certbot* installed, make sure you have at least version 1.7.0 installed.
+If you already have *certbot* installed, make sure you have at least version 1.7.0 installed. When you installed
+*certbot* as snap then you have to use the [snap installation](#snap) of the plugin.
 
 You can check what version of *certbot* is installed with this command:
 
@@ -73,6 +75,26 @@ pip install certbot_dns_duckdns -U
 git clone https://github.com/infinityofspace/certbot_dns_duckdns
 cd certbot_dns_duckdns
 pip install .
+```
+
+#### Snap
+
+If you use the *certbot* as snap package then you have to install *certbot_dns_duckdns* as a snap too:
+
+```commandline
+snap install certbot-dns-duckdns
+```
+
+Now connect the *certbot* snap installation with the plugin snap installation:
+
+```commandline
+sudo snap connect certbot:plugin certbot-dns-duckdns
+```
+
+The following command should now list `dns-duckdns` as an installed plugin:
+
+```commandline
+certbot plugins
 ```
 
 ### Usage
