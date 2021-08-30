@@ -1,4 +1,4 @@
-name: Publish release distribution to PyPI
+name: pypi release
 
 on:
   push:

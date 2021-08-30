@@ -4,8 +4,14 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
 
 ---
 
-![PyPI](https://img.shields.io/pypi/v/certbot_dns_duckdns) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/certbot_dns_duckdns) [![GitHub](https://img.shields.io/github/license/infinityofspace/certbot_dns_duckdns)](https://github.com/infinityofspace/certbot_dns_duckdns/blob/master/License) ![PyPI - Downloads](https://img.shields.io/pypi/dm/certbot_dns_duckdns) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/Publish%20release%20distribution%20to%20PyPI)
-![Docker Image Version (latest semver)](https://img.shields.io/docker/v/infinityofspace/certbot_dns_duckdns?sort=semver) ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/infinityofspace/certbot_dns_duckdns?sort=semver) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/build%20and%20publish%20release%20to%20Docker%20Hub)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/certbot_dns_duckdns?style=for-the-badge) [![GitHub](https://img.shields.io/github/license/infinityofspace/certbot_dns_duckdns?style=for-the-badge)](https://github.com/infinityofspace/certbot_dns_duckdns/blob/master/License)
+
+[![PyPI](https://img.shields.io/pypi/v/certbot_dns_duckdns?style=for-the-badge)](https://pypi.org/project/certbot-dns-duckdns/) ![PyPI - Downloads](https://img.shields.io/pypi/dm/certbot_dns_duckdns?style=for-the-badge) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/pypi%20release?style=for-the-badge)
+
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/infinityofspace/certbot_dns_duckdns?style=for-the-badge&sort=semver&label=Docker)](https://hub.docker.com/r/infinityofspace/certbot_dns_duckdns) ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/infinityofspace/certbot_dns_duckdns?style=for-the-badge&sort=semver) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/docker%20release?style=for-the-badge)
+
+[![certbot-dns-duckdns](https://snapcraft.io/certbot-dns-duckdns/badge.svg)](https://snapcraft.io/certbot-dns-duckdns) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/snap%20release?style=for-the-badge)
+
 ---
 
 ### Table of Contents
@@ -293,13 +299,13 @@ You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duc
 
 All modules used by this project are listed below:
 
-| Name | License|
-|:---:|:---:|
-| [certbot](https://github.com/certbot/certbot) | [Apache 2.0](https://raw.githubusercontent.com/certbot/certbot/master/LICENSE.txt) |
-| [requests](https://github.com/psf/requests) | [Apache 2.0](https://raw.githubusercontent.com/psf/requests/master/LICENSE) |
+| Name                                                               | License                                                                                       |
+|:------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------:|
+| [certbot](https://github.com/certbot/certbot)                      | [Apache 2.0](https://raw.githubusercontent.com/certbot/certbot/master/LICENSE.txt)            |
+| [requests](https://github.com/psf/requests)                        | [Apache 2.0](https://raw.githubusercontent.com/psf/requests/master/LICENSE)                   |
 | [zope.interface](https://github.com/zopefoundation/zope.interface) | [ZPL-2.1](https://raw.githubusercontent.com/zopefoundation/zope.interface/master/LICENSE.txt) |
-| [setuptools](https://github.com/pypa/setuptools) | [MIT](https://raw.githubusercontent.com/pypa/setuptools/main/LICENSE) |
-| [dnspython](https://github.com/rthalley/dnspython) | [ISC](https://raw.githubusercontent.com/rthalley/dnspython/master/LICENSE) |
+| [setuptools](https://github.com/pypa/setuptools)                   | [MIT](https://raw.githubusercontent.com/pypa/setuptools/main/LICENSE)                         |
+| [dnspython](https://github.com/rthalley/dnspython)                 | [ISC](https://raw.githubusercontent.com/rthalley/dnspython/master/LICENSE)                    |
 
 Furthermore, this readme file contains embeddings of [Shields.io](https://github.com/badges/shields).
 
