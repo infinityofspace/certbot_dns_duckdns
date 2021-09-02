@@ -44,7 +44,7 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:unstable
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:latest
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:${{ steps.get_tag.outputs.TAG }}
-            ghcr.io/${{ secrets.GITHUB_USERNAME }}/certbot_dns_duckdns:unstable
-            ghcr.io/${{ secrets.GITHUB_USERNAME }}/certbot_dns_duckdns:latest
-            ghcr.io/${{ secrets.GITHUB_USERNAME }}/certbot_dns_duckdns:${{ steps.get_tag.outputs.TAG }}
+            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:unstable
+            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:latest
+            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:${{ steps.get_tag.outputs.TAG }}
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8

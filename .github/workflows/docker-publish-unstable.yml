@@ -38,5 +38,5 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:unstable
-            ghcr.io/${{ secrets.GITHUB_USERNAME }}/certbot_dns_duckdns:unstable
+            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:unstable
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
