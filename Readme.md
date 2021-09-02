@@ -10,7 +10,7 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
 
 [![Docker Image Version (latest semver)](https://img.shields.io/docker/v/infinityofspace/certbot_dns_duckdns?style=for-the-badge&sort=semver&label=Docker)](https://hub.docker.com/r/infinityofspace/certbot_dns_duckdns) ![Docker Image Size (latest semver)](https://img.shields.io/docker/image-size/infinityofspace/certbot_dns_duckdns?style=for-the-badge&sort=semver) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/docker%20release?style=for-the-badge)
 
-[![certbot-dns-duckdns](https://snapcraft.io/certbot-dns-duckdns/badge.svg)](https://snapcraft.io/certbot-dns-duckdns) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/infinityofspace/certbot_dns_duckdns/snap%20release?style=for-the-badge)
+[![certbot-dns-duckdns](https://snapcraft.io/certbot-dns-duckdns/badge.svg)](https://snapcraft.io/certbot-dns-duckdns)
 
 ---
 
