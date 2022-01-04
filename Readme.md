@@ -23,8 +23,10 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
     3. [From source](#from-source)
     4. [Snap](#snap)
 3. [Usage](#usage)
-    1. [Local installation usage](#local-installation-usage)
-    2. [Docker usage](#docker-usage)
+    1. [Credentials file or cli parameters](#credentials-file-or-cli-parameters)
+    2. [Local installation usage](#local-installation-usage)
+    3. [Docker usage](#docker-usage)
+    4. [Plugin arguments](#plugin-arguments)
 4. [FAQ](#faq)
 5. [Third party notices](#third-party-notices)
 6. [License](#license)
@@ -290,6 +292,21 @@ example, use the following crontab expression:
 This will start a temporary docker container every 8 days at 3am and tries to renew expiring certificates.
 
 An example for the usage with docker-compose can be found [here](docker/simple/Readme.md).
+
+#### Plugin arguments
+
+```commandline
+Obtain certificates using a DNS TXT record for DuckDNS domains
+
+  --dns-duckdns-propagation-seconds DNS_DUCKDNS_PROPAGATION_SECONDS
+                        The number of seconds to wait for DNS to propagate before asking the ACME server to verify the DNS record. (default: 30)
+  --dns-duckdns-credentials DNS_DUCKDNS_CREDENTIALS
+                        DuckDNS credentials INI file. (default: None)
+  --dns-duckdns-token DNS_DUCKDNS_TOKEN
+                        DuckDNS token (overwrites credentials file) (default: None)
+  --dns-duckdns-no-txt-restore
+                        Do not restore the original TXT record (default: False)
+```
 
 ### FAQ
 

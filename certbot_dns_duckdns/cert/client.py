@@ -1,10 +1,12 @@
 import zope.interface
 from certbot import errors, interfaces
 from certbot.plugins import dns_common
+from dns import resolver
 
 from certbot_dns_duckdns.duckdns.client import DuckDNSClient
 
 DEFAULT_PROPAGATION_SECONDS = 30
+TXT_MAX_LEN = 255
 
 
 @zope.interface.implementer(interfaces.IAuthenticator)
@@ -15,6 +17,7 @@ class Authenticator(dns_common.DNSAuthenticator):
     """
 
     description = "Obtain certificates using a DNS TXT record for DuckDNS domains"
+    old_txt_value = ""
 
     def __init__(self, *args, **kwargs) -> None:
         super(Authenticator, self).__init__(*args, **kwargs)
@@ -30,6 +33,10 @@ class Authenticator(dns_common.DNSAuthenticator):
         super(Authenticator, cls).add_parser_arguments(add, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS)
         add("credentials", help="DuckDNS credentials INI file.")
         add("token", help="DuckDNS token (overwrites credentials file)")
+        add("no-txt-restore",
+            default=False,
+            action="store_true",
+            help="Do not restore the original TXT record")
 
     def more_info(self) -> str:
         """
@@ -66,6 +73,21 @@ class Authenticator(dns_common.DNSAuthenticator):
         :raise PluginError: if the TXT record can not be set of something goes wrong
         """
 
+        if not self.conf("no-txt-restore"):
+            # get the current TXT record
+            custom_resolver = resolver.Resolver()
+            try:
+                txt_values = custom_resolver.resolve(domain, "TXT")
+            except Exception as e:
+                raise errors.PluginError(e)
+
+            # there should only be one single TXT record
+            if len(txt_values) != 1:
+                raise errors.PluginError("issue resoling TXT record")
+
+            # remove the additional quotes around the TXT value
+            self.old_txt_value = txt_values[0].to_text()[1:-1]
+
         try:
             self._get_duckdns_client().set_txt_record(domain, validation)
         except Exception as e:
@@ -73,7 +95,8 @@ class Authenticator(dns_common.DNSAuthenticator):
 
     def _cleanup(self, domain: str, validation_name: str, validation: str) -> None:
         """
-        Clear the TXT record of the provided DuckDNS domain.
+        Clear the dns validation from the TXT record of the provided DuckDNS domain. Restore the previous TXT value if
+        the TXT value was not empty before the DNS challenge.
 
         :param domain: the DuckDNS domain
         :param validation_name: value to validate the dns challenge
@@ -82,7 +105,11 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
 
         try:
-            self._get_duckdns_client().clear_txt_record(domain)
+            if self.old_txt_value == "":
+                # setting an empty TXT value does not work with the DuckDNS API
+                self._get_duckdns_client().clear_txt_record(domain)
+            else:
+                self._get_duckdns_client().set_txt_record(domain, self.old_txt_value)
         except Exception as e:
             raise errors.PluginError(e)
 
