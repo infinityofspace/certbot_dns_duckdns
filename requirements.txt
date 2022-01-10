@@ -1,5 +1,5 @@
-setuptools>=39.0.1
-requests>=2.20.0
+setuptools~=57.0.0
+requests~=2.26.0
 certbot>=1.7.0
-zope.interface>=5.0.0
-dnspython>=2.0.0
+zope.interface~=5.4.0
+dnspython~=2.1.0
