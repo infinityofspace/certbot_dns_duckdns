@@ -30,9 +30,10 @@ setup(
     packages=find_packages(),
     python_requires=">=3.6",
     install_requires=[
-        "zope.interface>=5.0.0",
+        "zope.interface>=5.4.0",
         "certbot>=1.7.0",
-        "requests>=2.20.0"
+        "requests>=2.26.0"
+        "dnspython~=2.1.0"
     ],
     entry_points={
         "certbot.plugins": [
