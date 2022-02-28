@@ -32,8 +32,8 @@ setup(
     install_requires=[
         "zope.interface~=5.4.0",
         "certbot>=1.7.0",
-        "requests~=2.26.0",
-        "dnspython~=2.1.0"
+        "requests~=2.26",
+        "dnspython~=2.1"
     ],
     entry_points={
         "certbot.plugins": [
