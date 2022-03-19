@@ -173,7 +173,7 @@ typed-ast==1.4.3; python_version >= "3.6" and python_version < "3.8" or implemen
 types-cryptography==3.3.5; python_version >= "3.6"
 types-enum34==0.1.8; python_version >= "3.6"
 types-ipaddress==0.1.5; python_version >= "3.6"
-types-mock==0.1.5; python_version >= "3.6"
+types-mock==4.0.11; python_version >= "3.6"
 types-pyopenssl==20.0.5; python_version >= "3.6"
 types-pyrfc3339==0.1.2; python_version >= "3.6"
 types-python-dateutil==0.1.6; python_version >= "3.6"
