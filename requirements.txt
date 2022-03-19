@@ -1,4 +1,4 @@
-setuptools~=57.0.0
+setuptools~=60.10
 requests~=2.26
 certbot>=1.7.0
 zope.interface~=5.4.0
