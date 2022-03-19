@@ -10,7 +10,7 @@ jobs:
     name: Build distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
 
       - name: Set up Python 3.6
         uses: actions/setup-python@v2
