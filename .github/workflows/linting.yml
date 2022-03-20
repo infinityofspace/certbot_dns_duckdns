@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  linting of requirements.txt install:
+  linting-requirements-install:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,7 +34,7 @@ jobs:
       - name: Lint with pylint
         run: pylint certbot_dns_duckdns -d C,R,W
 
-  linting of setup.py install:
+  linting-setup-install:
     runs-on: ubuntu-latest
     strategy:
       matrix:
