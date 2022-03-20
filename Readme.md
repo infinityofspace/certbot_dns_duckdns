@@ -45,7 +45,7 @@ a DuckDNS domain. The plugin takes care of setting and deleting the TXT entry vi
 *If you want to use the docker image, then you don't need any requirements other than a working docker installation and
 can proceed directly to the [usage](#docker-usage)*
 
-If you prefer the local installation, then you need at least version 3.6 of Python installed. If you want to install
+If you prefer the local installation, then you need at least version 3.7 of Python installed. If you want to install
 this plugin with pip, then you also need pip3 installed.
 
 If you already have *certbot* installed, make sure you have at least version 1.7.0 installed. When you installed
@@ -328,4 +328,4 @@ Furthermore, this readme file contains embeddings of [Shields.io](https://github
 
 ### License
 
-[MIT](License) - Copyright (c) 2021 Marvin Heptner
+[MIT](License) - Copyright (c) 2021-2022 Marvin Heptner
