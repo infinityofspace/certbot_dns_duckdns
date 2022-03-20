@@ -69,7 +69,7 @@ class DuckDNSClient:
         # see delegated acme challenge https://letsencrypt.org/docs/challenge-types/#dns-01-challenge
         if VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain) == None:
             result = resolver.resolve("_acme-challenge." + domain, 'A')
-            root_domain = result.canonical_name.to_text().rstrip('.') # Nobody_84: In my testing the canonical name end with a '.' like 'example.duckdns.org.' 
+            root_domain = result.canonical_name.to_text().rstrip('.') # Nobody84: In my testing the canonical name end with a '.' like 'example.duckdns.org.' 
         
         assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
 
