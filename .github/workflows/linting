@@ -1,0 +1,63 @@
+
+name: linting
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  linting of requirements.txt install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.6", "3.7", "3.8", "3.9", "3.10" ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install linting requirements
+        run: |
+          pip install --upgrade pip
+          pip install flake8 pylint
+
+      - name: Install project requirements
+        run: pip install -r requirements.txt
+
+      - name: Lint with flake8
+        run: flake8 certbot_dns_duckdns --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Lint with pylint
+        run: pylint certbot_dns_duckdns -d C,R,W
+
+  linting of setup.py install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ "3.6", "3.7", "3.8", "3.9", "3.10" ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: install linting requirements
+        run: |
+          pip install --upgrade pip
+          pip install flake8 pylint
+
+      - name: Install project
+        run: pip install .
+
+      - name: Lint with flake8
+        run: flake8 certbot_dns_duckdns --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Lint with pylint
+        run: pylint certbot_dns_duckdns -d C,R,W
