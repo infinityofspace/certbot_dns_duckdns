@@ -1,3 +1,4 @@
+import re
 import zope.interface
 from certbot import errors, interfaces
 from certbot.plugins import dns_common
@@ -7,6 +8,7 @@ from certbot_dns_duckdns.duckdns.client import DuckDNSClient
 
 DEFAULT_PROPAGATION_SECONDS = 30
 TXT_MAX_LEN = 255
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
 
 
 @zope.interface.implementer(interfaces.IAuthenticator)
@@ -121,3 +123,37 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
         token = self.conf("token") or self.credentials.conf("token")
         return DuckDNSClient(token)
+
+    def _get_duckdns_domain(self, domain: str) -> str:
+        """
+        Gets the duckdns.org subdomain name used for the acme challenge, even if the challenge is delegated.
+        See delegated acme challenge https://letsencrypt.org/docs/challenge-types/#dns-01-challenge
+
+        :param domain: the domain to validate
+        :raise PluginError:  if not delegated to a duckdns.org domain.
+        :return: the duckdns.org subdomain
+        """
+
+        # valid duckdns.org domain
+        if VALID_DUCKDNS_DOMAIN_REGEX.match(domain) != None:
+            return domain
+
+        # delegated acme challenge (ipv4)
+        try:
+            result = resolver.resolve("_acme-challenge." + domain, 'A')
+            return result.canonical_name.to_text().rstrip('.')
+        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+            errors.PluginError(e)
+
+        # delegated acme challenge (ipv6)
+        try:
+            result = resolver.resolve("_acme-challenge." + domain, 'AAAA')
+            return result.canonical_name.to_text().rstrip('.')
+        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+            errors.PluginError(e)
+
+        
+        # invalid domain
+        e = Exception("The given domain \"{}\" is neither a duckdns.org subdomain nor " +
+                      " delegates _acme-challenge.{} to a duckdns.org subdomain.".format(domain, domain))
+        errors.PluginError(e)
