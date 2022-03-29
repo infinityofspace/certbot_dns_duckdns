@@ -8,7 +8,7 @@ from dns import resolver
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 BASE_URL = "https://www.duckdns.org/update"
-from certbot_dns_duckdns.cert.client import VALID_DUCKDNS_DOMAIN_REGEX
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
 
 class TXTUpdateError(Exception):
     """
