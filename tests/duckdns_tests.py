@@ -8,7 +8,6 @@ from dns.resolver import Resolver
 from certbot_dns_duckdns.cert.client import DEFAULT_PROPAGATION_SECONDS
 from certbot_dns_duckdns.duckdns.client import DuckDNSClient, TXTUpdateError
 
-TEST_DELEGATING_DOMAIN = os.environ.get("TEST_DELEGATING_DOMAIN")
 TEST_DOMAIN = os.environ.get("TEST_DOMAIN")
 TEST_DUCKDNS_TOKEN = os.environ.get("TEST_DUCKDNS_TOKEN")
 
@@ -167,7 +166,7 @@ class DuckDNSTests(unittest.TestCase):
         with self.subTest():
             root_domain = DuckDNSClient.__get_validated_root_domain__("-123ad-sdas--45-as-." + TEST_DOMAIN)
             self.assertEqual(root_domain, TEST_DOMAIN)
-            
+
     def test_clear_txt(self):
         duckdns_client = DuckDNSClient(TEST_DUCKDNS_TOKEN)
 
