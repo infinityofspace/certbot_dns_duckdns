@@ -8,8 +8,7 @@ from dns import resolver
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 BASE_URL = "https://www.duckdns.org/update"
-VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
-
+from certbot_dns_duckdns.cert.client import VALID_DUCKDNS_DOMAIN_REGEX
 
 class TXTUpdateError(Exception):
     """
@@ -64,18 +63,9 @@ class DuckDNSClient:
         # get the root domain with the first subdomain
         domain_parts = domain.split(".")
         root_domain = ".".join(domain_parts[-3:])
-
-        # if the root domain is not a duckdns.org domain, check if it delegates the acme challenge and resolve the resulting CNAME.
-        # see delegated acme challenge https://letsencrypt.org/docs/challenge-types/#dns-01-challenge
-        if VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain) == None:
-            result = resolver.resolve("_acme-challenge." + domain, 'A')
-            root_domain = result.canonical_name.to_text().rstrip('.') # Nobody84: In my testing the canonical name end with a '.' like 'example.duckdns.org.' 
-        
         assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
 
         return root_domain
-
-
 
     def clear_txt_record(self, domain: str) -> None:
         """
