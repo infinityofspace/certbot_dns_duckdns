@@ -167,11 +167,7 @@ class DuckDNSTests(unittest.TestCase):
         with self.subTest():
             root_domain = DuckDNSClient.__get_validated_root_domain__("-123ad-sdas--45-as-." + TEST_DOMAIN)
             self.assertEqual(root_domain, TEST_DOMAIN)
-
-    def test_get_validated_root_domain_delegated_acme_challenge(self):
-        with self.subTest():
-            root_domain = DuckDNSClient.__get_validated_root_domain__(TEST_DELEGATING_DOMAIN)
-            self.assertEqual(root_domain, TEST_DOMAIN)
+            
     def test_clear_txt(self):
         duckdns_client = DuckDNSClient(TEST_DUCKDNS_TOKEN)
 
