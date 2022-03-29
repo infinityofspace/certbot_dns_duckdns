@@ -134,7 +134,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         :return: the duckdns.org subdomain
         """
 
-        # valid duckdns.org domain
+        # valid duckdns.org subdomain
         if VALID_DUCKDNS_DOMAIN_REGEX.match(domain) != None:
             return domain
 
@@ -143,17 +143,17 @@ class Authenticator(dns_common.DNSAuthenticator):
             result = resolver.resolve("_acme-challenge." + domain, 'A')
             return result.canonical_name.to_text().rstrip('.')
         except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
-            errors.PluginError(e)
+            pass
 
         # delegated acme challenge (ipv6)
         try:
             result = resolver.resolve("_acme-challenge." + domain, 'AAAA')
             return result.canonical_name.to_text().rstrip('.')
         except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
-            errors.PluginError(e)
+            pass
 
         
         # invalid domain
-        e = Exception("The given domain \"{}\" is neither a duckdns.org subdomain nor " +
-                      " delegates _acme-challenge.{} to a duckdns.org subdomain.".format(domain, domain))
+        e = Exception("The given domain \"{}\" is neither a duckdns subdomain nor " +
+                      " delegates _acme-challenge.{} to a duckdns subdomain.".format(domain, domain))
         errors.PluginError(e)
