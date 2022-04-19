@@ -75,11 +75,14 @@ class Authenticator(dns_common.DNSAuthenticator):
         :raise PluginError: if the TXT record can not be set of something goes wrong
         """
 
+        # get the duckdns domain
+        duckdns_domain = self._get_duckdns_domain(domain)
+
         if not self.conf("no-txt-restore"):
             # get the current TXT record
             custom_resolver = resolver.Resolver()
             try:
-                txt_values = custom_resolver.resolve(domain, "TXT")
+                txt_values = custom_resolver.resolve(duckdns_domain, "TXT")
             except Exception as e:
                 raise errors.PluginError(e)
 
@@ -91,7 +94,7 @@ class Authenticator(dns_common.DNSAuthenticator):
             self.old_txt_value = txt_values[0].to_text()[1:-1]
 
         try:
-            self._get_duckdns_client().set_txt_record(domain, validation)
+            self._get_duckdns_client().set_txt_record(duckdns_domain, validation)
         except Exception as e:
             raise errors.PluginError(e)
 
@@ -105,13 +108,16 @@ class Authenticator(dns_common.DNSAuthenticator):
         :param validation: the value for the TXT record
         :raise PluginError:  if the TXT record can not be cleared of something goes wrong
         """
+        
+        # get the duckdns domain
+        duckdns_domain = self._get_duckdns_domain(domain)
 
         try:
             if self.old_txt_value == "":
                 # setting an empty TXT value does not work with the DuckDNS API
-                self._get_duckdns_client().clear_txt_record(domain)
+                self._get_duckdns_client().clear_txt_record(duckdns_domain)
             else:
-                self._get_duckdns_client().set_txt_record(domain, self.old_txt_value)
+                self._get_duckdns_client().set_txt_record(duckdns_domain, self.old_txt_value)
         except Exception as e:
             raise errors.PluginError(e)
 
