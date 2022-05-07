@@ -29,7 +29,7 @@ certifi==2021.10.8; python_version >= "3.7" and python_full_version < "3.0.0" or
 cffi==1.15.0; python_version >= "3.7" or python_version >= "3.7"
 charset-normalizer==2.0.12; python_full_version >= "3.6.0" and python_version >= "3.7"
 cleo==1.0.0a4; python_version >= "3.7" and python_version < "4.0"
-cloudflare==2.8.15; python_version >= "3.7"
+cloudflare==2.9.10; python_version >= "3.7"
 colorama==0.4.3; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7" or sys_platform == "win32" and python_full_version >= "3.6.2" and python_version >= "3.7" or python_version >= "3.7" and python_full_version < "3.0.0" and sys_platform == "win32" or python_full_version >= "3.5.0" and python_version >= "3.7" and sys_platform == "win32" or python_version >= "3.7" and python_full_version < "3.0.0" and platform_system == "Windows" or python_version >= "3.7" and python_full_version >= "3.5.0" and platform_system == "Windows"
 configargparse==1.5.3; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version >= "3.7"
 configobj==5.0.6; python_version >= "3.7"
