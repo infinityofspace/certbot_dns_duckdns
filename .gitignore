@@ -266,3 +266,4 @@ dmypy.json
 test_certbot
 *.ini
 *.snap
+*.vscode

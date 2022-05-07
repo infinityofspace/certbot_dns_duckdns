@@ -2,13 +2,13 @@ import logging
 import re
 
 import requests
+from dns import resolver
 
 # prevent urllib3 to log request with the api token
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 BASE_URL = "https://www.duckdns.org/update"
 VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
-
 
 class TXTUpdateError(Exception):
     """

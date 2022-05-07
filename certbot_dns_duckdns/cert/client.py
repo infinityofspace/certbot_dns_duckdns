@@ -1,3 +1,4 @@
+import re
 import zope.interface
 from certbot import errors, interfaces
 from certbot.plugins import dns_common
@@ -7,6 +8,7 @@ from certbot_dns_duckdns.duckdns.client import DuckDNSClient
 
 DEFAULT_PROPAGATION_SECONDS = 30
 TXT_MAX_LEN = 255
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
 
 
 @zope.interface.implementer(interfaces.IAuthenticator)
@@ -73,11 +75,14 @@ class Authenticator(dns_common.DNSAuthenticator):
         :raise PluginError: if the TXT record can not be set of something goes wrong
         """
 
+        # get the duckdns domain
+        duckdns_domain = self._get_duckdns_domain(domain)
+
         if not self.conf("no-txt-restore"):
             # get the current TXT record
             custom_resolver = resolver.Resolver()
             try:
-                txt_values = custom_resolver.resolve(domain, "TXT")
+                txt_values = custom_resolver.resolve(duckdns_domain, "TXT")
             except Exception as e:
                 raise errors.PluginError(e)
 
@@ -89,7 +94,7 @@ class Authenticator(dns_common.DNSAuthenticator):
             self.old_txt_value = txt_values[0].to_text()[1:-1]
 
         try:
-            self._get_duckdns_client().set_txt_record(domain, validation)
+            self._get_duckdns_client().set_txt_record(duckdns_domain, validation)
         except Exception as e:
             raise errors.PluginError(e)
 
@@ -103,13 +108,16 @@ class Authenticator(dns_common.DNSAuthenticator):
         :param validation: the value for the TXT record
         :raise PluginError:  if the TXT record can not be cleared of something goes wrong
         """
+        
+        # get the duckdns domain
+        duckdns_domain = self._get_duckdns_domain(domain)
 
         try:
             if self.old_txt_value == "":
                 # setting an empty TXT value does not work with the DuckDNS API
-                self._get_duckdns_client().clear_txt_record(domain)
+                self._get_duckdns_client().clear_txt_record(duckdns_domain)
             else:
-                self._get_duckdns_client().set_txt_record(domain, self.old_txt_value)
+                self._get_duckdns_client().set_txt_record(duckdns_domain, self.old_txt_value)
         except Exception as e:
             raise errors.PluginError(e)
 
@@ -121,3 +129,37 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
         token = self.conf("token") or self.credentials.conf("token")
         return DuckDNSClient(token)
+
+    def _get_duckdns_domain(self, domain: str) -> str:
+        """
+        Gets the duckdns.org subdomain name used for the acme challenge, even if the challenge is delegated.
+        See delegated acme challenge https://letsencrypt.org/docs/challenge-types/#dns-01-challenge
+
+        :param domain: the domain to validate
+        :raise PluginError:  if not delegated to a duckdns.org domain.
+        :return: the duckdns.org subdomain
+        """
+
+        # valid duckdns.org subdomain
+        if VALID_DUCKDNS_DOMAIN_REGEX.match(domain) != None:
+            return domain
+
+        # delegated acme challenge (ipv4)
+        try:
+            result = resolver.resolve("_acme-challenge." + domain, 'A')
+            return result.canonical_name.to_text().rstrip('.')
+        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+            pass
+
+        # delegated acme challenge (ipv6)
+        try:
+            result = resolver.resolve("_acme-challenge." + domain, 'AAAA')
+            return result.canonical_name.to_text().rstrip('.')
+        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+            pass
+
+        
+        # invalid domain
+        e = Exception("The given domain \"{}\" is neither a duckdns subdomain nor " +
+                      " delegates _acme-challenge.{} to a duckdns subdomain.".format(domain, domain))
+        errors.PluginError(e)
