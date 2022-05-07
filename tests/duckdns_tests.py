@@ -6,7 +6,8 @@ from dns import resolver
 from dns.resolver import Resolver
 
 from certbot_dns_duckdns.cert.client import DEFAULT_PROPAGATION_SECONDS
-from certbot_dns_duckdns.duckdns.client import DuckDNSClient, TXTUpdateError
+from certbot_dns_duckdns.duckdns.client import DuckDNSClient, TXTUpdateError, NotValidDuckdnsTokenError, \
+    NotValidDuckdnsDomainError, is_valid_duckdns_domain, is_valid_full_duckdns_domain
 
 TEST_DOMAIN = os.environ.get("TEST_DOMAIN")
 TEST_DUCKDNS_TOKEN = os.environ.get("TEST_DUCKDNS_TOKEN")
@@ -22,77 +23,75 @@ class DuckDNSTests(unittest.TestCase):
     def test_invalid_token(self):
         duckdns_client = DuckDNSClient("42")
 
-        # test set txt record
-        txt_set_error = False
-        try:
-            duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
-        except TXTUpdateError:
-            txt_set_error = True
-        self.assertEqual(True, txt_set_error)
+        with self.subTest():
+            # test set txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
 
-        # test clear txt record
-        txt_clear_error = False
-        try:
-            duckdns_client.clear_txt_record(TEST_DOMAIN)
-        except TXTUpdateError:
-            txt_clear_error = True
-        self.assertEqual(True, txt_clear_error)
+        with self.subTest():
+            # test clear txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.clear_txt_record(TEST_DOMAIN)
 
     def test_empty_token(self):
-        duckdns_client = DuckDNSClient("")
+        with self.subTest():
+            with self.assertRaises(NotValidDuckdnsTokenError):
+                duckdns_client = DuckDNSClient("")
 
-        # test set txt record
-        txt_set_error = False
-        try:
-            duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
-        except AssertionError:
-            txt_set_error = True
-        self.assertEqual(True, txt_set_error)
+        # explicitly set the token to an empty string
+        duckdns_client = DuckDNSClient("test")
+        duckdns_client._token = ""
 
-        # test clear txt record
-        txt_clear_error = False
-        try:
-            duckdns_client.clear_txt_record(TEST_DOMAIN)
-        except AssertionError:
-            txt_clear_error = True
-        self.assertEqual(True, txt_clear_error)
+        with self.subTest():
+            # test set txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
+
+        with self.subTest():
+            # test clear txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.clear_txt_record(TEST_DOMAIN)
 
     def test_none_token(self):
-        duckdns_client = DuckDNSClient(None)
+        with self.subTest():
+            with self.assertRaises(NotValidDuckdnsTokenError):
+                duckdns_client = DuckDNSClient(None)
 
-        # test set txt record
-        txt_set_error = False
-        try:
-            duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
-        except AssertionError:
-            txt_set_error = True
-        self.assertEqual(True, txt_set_error)
+        # explicitly set the token to None
+        duckdns_client = DuckDNSClient("test")
+        duckdns_client._token = None
 
-        # test clear txt record
-        txt_clear_error = False
-        try:
-            duckdns_client.clear_txt_record(TEST_DOMAIN)
-        except AssertionError:
-            txt_clear_error = True
-        self.assertEqual(True, txt_clear_error)
+        with self.subTest():
+            # test set txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.set_txt_record(TEST_DOMAIN, "simple text")
 
-    def test_invalid_domain(self):
+        with self.subTest():
+            # test clear txt record
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.clear_txt_record(TEST_DOMAIN)
+
+    def test_wrong_domain(self):
         duckdns_client = DuckDNSClient(TEST_DUCKDNS_TOKEN)
 
-        with self.assertRaises(TXTUpdateError):
-            duckdns_client.set_txt_record("thisdomainsisnotvalid", "simple text")
+        with self.subTest():
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.set_txt_record("thisdomainsiswrong", "simple text")
 
-        with self.assertRaises(TXTUpdateError):
-            duckdns_client.clear_txt_record("thisdomainsisnotvalid")
+        with self.subTest():
+            with self.assertRaises(TXTUpdateError):
+                duckdns_client.clear_txt_record("thisdomainsiswrong")
 
     def test_empty_domain(self):
         duckdns_client = DuckDNSClient(TEST_DUCKDNS_TOKEN)
 
-        with self.assertRaises(AssertionError):
-            duckdns_client.set_txt_record("", "simple text")
+        with self.subTest():
+            with self.assertRaises(NotValidDuckdnsDomainError):
+                duckdns_client.set_txt_record("", "simple text")
 
-        with self.assertRaises(AssertionError):
-            duckdns_client.clear_txt_record("")
+        with self.subTest():
+            with self.assertRaises(NotValidDuckdnsDomainError):
+                duckdns_client.clear_txt_record("")
 
     def test_add_txt(self):
         txt_record_text = "simple text"
@@ -188,6 +187,41 @@ class DuckDNSTests(unittest.TestCase):
         txt_value = custom_resolver.resolve(TEST_DOMAIN, "TXT").response.answer[0][0].strings[0].decode("utf-8")
 
         self.assertEqual("", txt_value)
+
+    def test_is_valid_duckdns_domain(self):
+        with self.subTest():
+            self.assertTrue(is_valid_duckdns_domain(TEST_DOMAIN))
+            self.assertTrue(is_valid_duckdns_domain("test." + TEST_DOMAIN))
+            self.assertTrue(is_valid_duckdns_domain("test.abc." + TEST_DOMAIN))
+            self.assertTrue(is_valid_duckdns_domain("test.abc.efg." + TEST_DOMAIN))
+            self.assertTrue(is_valid_duckdns_domain("test-abc." + TEST_DOMAIN))
+            self.assertTrue(is_valid_duckdns_domain("abc.def.ghi"))
+            self.assertTrue(is_valid_duckdns_domain("example.com"))
+            self.assertTrue(is_valid_duckdns_domain("test.duckduckduck.ababaa"))
+            self.assertTrue(is_valid_duckdns_domain("123456"))
+
+        with self.subTest():
+            self.assertFalse(is_valid_duckdns_domain("example.com."))
+            self.assertFalse(is_valid_duckdns_domain("example.%."))
+            self.assertFalse(is_valid_duckdns_domain("$.%."))
+            self.assertFalse(is_valid_duckdns_domain("$"))
+            self.assertFalse(is_valid_duckdns_domain("1234*"))
+
+    def test_is_valid_full_duckdns_domain(self):
+        with self.subTest():
+            self.assertTrue(is_valid_full_duckdns_domain(TEST_DOMAIN))
+            self.assertTrue(is_valid_full_duckdns_domain("test." + TEST_DOMAIN))
+            self.assertTrue(is_valid_full_duckdns_domain("test.abc." + TEST_DOMAIN))
+            self.assertTrue(is_valid_full_duckdns_domain("test.abc.efg." + TEST_DOMAIN))
+            self.assertTrue(is_valid_full_duckdns_domain("test-abc." + TEST_DOMAIN))
+            self.assertTrue(is_valid_full_duckdns_domain("test-abc.test-def." + TEST_DOMAIN))
+
+        with self.subTest():
+            self.assertFalse(is_valid_full_duckdns_domain("abc.def.ghi"))
+            self.assertFalse(is_valid_full_duckdns_domain("example.com"))
+            self.assertFalse(is_valid_full_duckdns_domain("example.com."))
+            self.assertFalse(is_valid_full_duckdns_domain("test.duckduckduck.org"))
+            self.assertFalse(is_valid_full_duckdns_domain("test.duckdns.com"))
 
 
 if __name__ == "__main__":

@@ -1,14 +1,14 @@
-import re
 import zope.interface
 from certbot import errors, interfaces
 from certbot.plugins import dns_common
 from dns import resolver
 
-from certbot_dns_duckdns.duckdns.client import DuckDNSClient
+from certbot_dns_duckdns.duckdns.client import DuckDNSClient, NotValidDuckdnsDomainError, \
+    is_valid_full_duckdns_domain
 
 DEFAULT_PROPAGATION_SECONDS = 30
 TXT_MAX_LEN = 255
-VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
+ACME_CHALLENGE_TXT_PREFIX = "_acme-challenge"
 
 
 @zope.interface.implementer(interfaces.IAuthenticator)
@@ -108,7 +108,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         :param validation: the value for the TXT record
         :raise PluginError:  if the TXT record can not be cleared of something goes wrong
         """
-        
+
         # get the duckdns domain
         duckdns_domain = self._get_duckdns_domain(domain)
 
@@ -141,25 +141,36 @@ class Authenticator(dns_common.DNSAuthenticator):
         """
 
         # valid duckdns.org subdomain
-        if VALID_DUCKDNS_DOMAIN_REGEX.match(domain) != None:
+        if is_valid_full_duckdns_domain(domain):
             return domain
 
         # delegated acme challenge (ipv4)
         try:
-            result = resolver.resolve("_acme-challenge." + domain, 'A')
-            return result.canonical_name.to_text().rstrip('.')
+            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", 'A')
+            delegated_domain = result.canonical_name.to_text().rstrip('.')
+
+            # check if the delegated domain is a valid duckdns.org domain
+            if is_valid_full_duckdns_domain(delegated_domain):
+                return delegated_domain
+            else:
+                raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
         except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
             pass
 
         # delegated acme challenge (ipv6)
         try:
-            result = resolver.resolve("_acme-challenge." + domain, 'AAAA')
-            return result.canonical_name.to_text().rstrip('.')
+            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", 'AAAA')
+            delegated_domain = result.canonical_name.to_text().rstrip('.')
+
+            # check if the delegated domain is a valid duckdns.org domain
+            if is_valid_full_duckdns_domain(delegated_domain):
+                return delegated_domain
+            else:
+                raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
         except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
             pass
 
-        
         # invalid domain
-        e = Exception("The given domain \"{}\" is neither a duckdns subdomain nor " +
-                      " delegates _acme-challenge.{} to a duckdns subdomain.".format(domain, domain))
-        errors.PluginError(e)
+        e = Exception(f"The given domain \"{domain}\" is neither a duckdns subdomain nor "
+                      f" delegates _acme-challenge.{domain} to a duckdns subdomain.")
+        raise errors.PluginError(e)

@@ -2,19 +2,48 @@ import logging
 import re
 
 import requests
-from dns import resolver
 
 # prevent urllib3 to log request with the api token
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 BASE_URL = "https://www.duckdns.org/update"
-VALID_DUCKDNS_DOMAIN_REGEX = re.compile("^[a-z0-9\\-]+(.duckdns.org)?$")
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile(r"^([a-z\d\\-]+\.)*[a-z\d\\-]+(\.duckdns\.org)?$")
+VALID_FULL_DUCKDNS_DOMAIN_REGEX = re.compile(r"^([a-z\d\\-]+\.)*[a-z\d\\-]+\.duckdns\.org$")
+
+
+def is_valid_duckdns_domain(domain):
+    return VALID_DUCKDNS_DOMAIN_REGEX.match(domain) is not None
+
+
+def is_valid_full_duckdns_domain(domain):
+    return VALID_FULL_DUCKDNS_DOMAIN_REGEX.match(domain) is not None
+
 
 class TXTUpdateError(Exception):
     """
-    Exception if during the the TXT record changing something goes wrong.
+    Exception if during the TXT record changing something goes wrong.
     """
     pass
+
+
+class NotValidDuckdnsDomainError(Exception):
+    """
+    Exception if the domain is not a valid duckdns domain.
+    """
+
+    def __init__(self, domain):
+        self.domain = domain
+        self.message = f"The domain \"{domain}\" is not valid a duckdns subdomain."
+        super().__init__(self.message)
+
+
+class NotValidDuckdnsTokenError(Exception):
+    """
+    Exception if the token is not a valid duckdns token.
+    """
+
+    def __init__(self):
+        super().__init__("The token is not valid a duckdns token.")
 
 
 class DuckDNSClient:
@@ -27,9 +56,13 @@ class DuckDNSClient:
         Creates a new DuckDNSClient object.
 
         :param token: the DuckDNS token used for API calls
-        """
 
-        self.token = token
+        :raise NotValidDuckdnsTokenError: if the token is not a valid duckdns token
+        """
+        if token is None or len(token) == 0:
+            raise NotValidDuckdnsTokenError()
+
+        self._token = token
 
     def set_txt_record(self, domain: str, txt: str) -> None:
         """
@@ -38,16 +71,18 @@ class DuckDNSClient:
         :param domain: the full domain or only the subdomain of duckdns
             (e.g. example of the full domain example.duckdns.org) for which the value of the TXT entry should set
         :param txt: the string value to set as TXT record
+
         :raise TXTUpdateError: if the TXT record can not be set
+        :raise NotValidDuckdnsDomainError: if the domain is not a valid duckdns domain
         """
 
-        assert self.token is not None and len(self.token) > 0
-        assert domain is not None and len(domain) > 0
+        if domain is None or not is_valid_duckdns_domain(domain):
+            raise NotValidDuckdnsDomainError(domain)
 
         root_domain = self.__get_validated_root_domain__(domain)
 
         params = {
-            "token": self.token,
+            "token": self._token,
             "domains": root_domain,
             "txt": txt
         }
@@ -60,10 +95,19 @@ class DuckDNSClient:
 
     @staticmethod
     def __get_validated_root_domain__(domain):
+        """
+        Get the root domain from a DuckDNS domain.
+
+        :param domain: only the subdomain of duckdns
+        :return: the root domain
+
+        :raise NotValidDuckdnsDomainError: if the domain is not a valid duckdns domain
+        """
         # get the root domain with the first subdomain
         domain_parts = domain.split(".")
         root_domain = ".".join(domain_parts[-3:])
-        assert VALID_DUCKDNS_DOMAIN_REGEX.match(root_domain)
+        if not is_valid_duckdns_domain(root_domain):
+            raise NotValidDuckdnsDomainError(root_domain)
 
         return root_domain
 
@@ -73,16 +117,18 @@ class DuckDNSClient:
 
         :param domain: the full domain or only the subdomain of duckdns
             (e.g. example of the full domain example.duckdns.org) for which the TXT entry should be cleared
+
         :raise TXTUpdateError: if the TXT record can not be cleared
+        :raise NotValidDuckdnsDomainError: if the domain is not a valid duckdns domain
         """
 
-        assert self.token is not None and len(self.token) > 0
-        assert domain is not None and len(domain) > 0
+        if domain is None or not is_valid_duckdns_domain(domain):
+            raise NotValidDuckdnsDomainError(domain)
 
         root_domain = self.__get_validated_root_domain__(domain)
 
         params = {
-            "token": self.token,
+            "token": self._token,
             "domains": root_domain,
             "txt": "",
             "clear": "true"
