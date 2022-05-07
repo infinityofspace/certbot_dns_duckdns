@@ -148,9 +148,9 @@ To check if the plugin is installed correctly and detected properly by certbot, 
 certbot plugins
 ```
 
----
-
 Below are some examples of how to use the plugin:
+
+---
 
 Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org":
 
@@ -166,6 +166,8 @@ certbot certonly \
   -d "example.duckdns.org"
 ```
 
+---
+
 Generate a certificate for a DNS-01 challenge of the subdomain "cloud.example.duckdns.org":
 
 ```commandline
@@ -179,6 +181,8 @@ certbot certonly \
   --dns-duckdns-propagation-seconds 60 \
   -d "cloud.example.duckdns.org"
 ```
+
+---
 
 Generate a wildcard certificate for a DNS-01 challenge of all subdomains "*.example.duckdns.org":
 
@@ -194,6 +198,8 @@ certbot certonly \
   -d "*.example.duckdns.org"
 ```
 
+---
+
 Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org" using a credentials file:
 
 ```commandline
@@ -207,6 +213,8 @@ certbot certonly \
   --dns-duckdns-propagation-seconds 60 \
   -d "example.duckdns.org"
 ```
+
+---
 
 Generate a certificate for a DNS-01 challenge of the domain "example.duckdns.org" without an account (i.e. without an
 email address):
@@ -222,6 +230,8 @@ certbot certonly \
   --dns-duckdns-propagation-seconds 60 \
   -d "example.duckdns.org"
 ```
+
+---
 
 Generate a staging certificate (i.e. temporary testing certificate) for a DNS-01 challenge of the domain "
 example.duckdns.org":
@@ -239,11 +249,66 @@ certbot certonly \
   --staging
 ```
 
+---
+
+DNS-01 Challenges allow using CNAME records or NS records to delegate the challenge response to other DNS zones. 
+For example, this allows you to resolve the DNS challenge for another provider's domain using a duckdns domain.
+For example, we have `abc.duckdns.org` as duckdns domain and `example.com` as our other domain.
+We might have an existing DNS configuration which look like this:
+```commandline
+one.example.com. 600 IN CNAME two.example.com.
+two.example.com. 600 IN CNAME abc.duckdns.org.
+```
+It chains `one.example.com` to `two.example.com` and finally to `abc.duckdns.org`.
+
+Now we want to issue a DNS-01 challenge for the subdomain "test.example.com".
+So we create a CNAME record for "_acme-challenge.test.example.com" pointing to "one.example.com".
+The DNS records now look like this:
+```commandline
+_acme-challenge.test.example.com. 600 IN CNAME one.example.com.
+one.example.com. 600 IN CNAME two.example.com.
+two.example.com. 600 IN CNAME abc.duckdns.org.
+```
+
+Now we use certbot to generate a certificate for the domain `test.example.com` with the DNS challenge:
+
+```commandline
+certbot certonly \
+  --non-interactive \
+  --agree-tos \
+  --email <your-email> \
+  --preferred-challenges dns \
+  --authenticator dns-duckdns \
+  --dns-duckdns-token <your-duckdns-token> \
+  --dns-duckdns-propagation-seconds 60 \
+  -d "test.example.com" \
+```
+
+What happens in the background can be seen very well in the DNS records:
+```commandline
+_acme-challenge.test.example.com. 600 IN CNAME one.example.com.
+one.example.com. 600 IN CNAME two.example.com.
+two.example.com. 600 IN CNAME abc.duckdns.org.
+abc.duckdns.org. 60 TXT "asduh9asudhßa97sdhap9sudaisudoi"
+```
+
+When validating the DNS challenge value, all CNAME records are now traversed.
+It starts with `_acme-challenge.test.example.com` and goes to `one.example.com`, then to `two.example.com` and finally 
+to `abc.duckdns.org`. Here is the validation token stored as TXT record.
+
+The example could also be shortened by directly creating a CNAME entry from `_acme-challenge.test.example.com` to 
+`abc.duckdns.org`. So we skip all other CNAME records in between. To make it clear that any CNAME records are traversed 
+during validation, the intermediate parts are added in the previous example.
+
+---
+
 Try to update all currently generated certificates:
 
 ```commandline
 certbot renew
 ```
+
+---
 
 You can find al list of all available certbot cli options in
 the [official documentation](https://certbot.eff.org/docs/using.html#certbot-command-line-options) of *certbot*.
