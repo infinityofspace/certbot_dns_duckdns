@@ -1,6 +1,5 @@
 setuptools~=60.10
 requests~=2.27
 certbot>=1.7.0
-zope.interface~=5.4.0
 dnspython~=2.2
 cryptography<=3.3.2
