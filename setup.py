@@ -30,7 +30,6 @@ setup(
     packages=find_packages(),
     python_requires=">=3.7",
     install_requires=[
-        "zope.interface~=5.4.0",
         "certbot>=1.7.0",
         "requests~=2.26",
         "dnspython~=2.1"

@@ -1,5 +1,4 @@
-import zope.interface
-from certbot import errors, interfaces
+from certbot import errors
 from certbot.plugins import dns_common
 from dns import resolver
 
@@ -11,8 +10,6 @@ TXT_MAX_LEN = 255
 ACME_CHALLENGE_TXT_PREFIX = "_acme-challenge"
 
 
-@zope.interface.implementer(interfaces.IAuthenticator)
-@zope.interface.provider(interfaces.IPluginFactory)
 class Authenticator(dns_common.DNSAuthenticator):
     """
     Authenticator class to handle dns-01 challenge for DuckDNS domains.
