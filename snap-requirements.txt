@@ -1,2 +1,0 @@
-requests~=2.27
-dnspython~=2.2
