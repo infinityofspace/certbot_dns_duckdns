@@ -1,4 +1,4 @@
-setuptools~=60.10
+setuptools~=63.1
 requests~=2.27
 certbot>=1.7.0
 dnspython~=2.2
