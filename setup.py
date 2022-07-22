@@ -31,8 +31,8 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "certbot>=1.7.0",
-        "requests~=2.26",
-        "dnspython~=2.1"
+        "requests~=2.28",
+        "dnspython~=2.2"
     ],
     entry_points={
         "certbot.plugins": [
