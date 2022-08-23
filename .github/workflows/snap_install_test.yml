@@ -21,7 +21,7 @@ jobs:
           path: ${{ steps.snapcraft.outputs.snap }}
 
       - name: install certbot
-        run: sudo snap install certbot
+        run: sudo snap install certbot --classic
 
       - name: install snap build and connect plugin snap to certbot
         run: |
