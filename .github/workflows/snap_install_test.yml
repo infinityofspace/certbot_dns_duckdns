@@ -23,9 +23,12 @@ jobs:
       - name: install certbot
         run: sudo snap install certbot --classic
 
-      - name: install snap build and connect plugin snap to certbot
+      - name: install snap build
+        run: sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
+
+      - name: connect plugin to certbot
         run: |
-          sudo snap install --dangerous ${{ steps.snapcraft.outputs.snap }}
+          sudo snap set certbot trust-plugin-with-root=ok
           sudo snap connect certbot:plugin certbot-dns-duckdns
 
       - name: check if plugin is registered
