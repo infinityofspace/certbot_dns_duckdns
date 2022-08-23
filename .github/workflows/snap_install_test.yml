@@ -1,0 +1,31 @@
+name: snap install test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-snap-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: build snap
+        uses: snapcore/action-build@v1
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: snap
+          path: ${{ steps.snapcraft.outputs.snap }}
+
+      - name: install certbot
+        run: sudo snap install certbot
+
+      - name: install snap build and connect plugin snap to certbot
+        run: |
+          sudo snap install ${{ steps.snapcraft.outputs.snap }}
+          sudo snap connect certbot:plugin certbot-dns-duckdns
+
+      - name: check if plugin is registered
+        run: certbot plugins | grep -c "certbot_dns_duckdns" || true
