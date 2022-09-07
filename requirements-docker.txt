@@ -2,4 +2,4 @@ setuptools>=41.6.0
 requests>=2.20.0,<3.0
 certbot>=1.18.0,<2.0
 dnspython>=2.0.0,<3.0
-cryptography<=3.4.8
+cryptography<38.0.1
