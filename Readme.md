@@ -351,7 +351,7 @@ installation you may need to use the crontab of a root user to access the docker
 example, use the following crontab expression:
 
 ```
-0 3 */8 * * docker run --rm -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest certbot renew
+0 3 */8 * * docker run --rm -v "/etc/letsencrypt:/etc/letsencrypt" -v "/var/log/letsencrypt:/var/log/letsencrypt" infinityofspace/certbot_dns_duckdns:latest  renew
 ```
 
 This will start a temporary docker container every 8 days at 3am and tries to renew expiring certificates.
