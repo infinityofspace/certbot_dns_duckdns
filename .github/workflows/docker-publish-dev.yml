@@ -1,19 +1,15 @@
-name: docker release
+name: docker dev
 
 on:
   workflow_dispatch:
   push:
-    tags:
-      - "v*"
+    branches:
+      - dev
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: get the tag name
-        id: get_tag
-        run: echo ::set-output name=TAG::$(echo $GITHUB_REF | cut -d / -f 3)
-
       - name: checkout code
         uses: actions/checkout@v3
 
@@ -41,12 +37,8 @@ jobs:
         with:
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:unstable
-            ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:latest
-            ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:${{ steps.get_tag.outputs.TAG }}
-            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:unstable
-            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:latest
-            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:${{ steps.get_tag.outputs.TAG }}
+            ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:dev
+            ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns:dev
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
           cache-from: type=gha
           cache-to: type=gha,mode=max
