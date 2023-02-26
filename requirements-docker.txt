@@ -1,5 +1,0 @@
-setuptools>=41.6.0
-requests>=2.20.0,<3.0
-certbot>=1.18.0,<3.0
-dnspython>=2.0.0,<3.0
-cryptography>=38.0
