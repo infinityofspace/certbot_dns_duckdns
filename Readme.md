@@ -392,4 +392,4 @@ Furthermore, this readme file contains embeddings of [Shields.io](https://github
 
 ### License
 
-[MIT](License) - Copyright (c) 2021-2022 Marvin Heptner
+[MIT](License) - Copyright (c) 2021-2024 Marvin Heptner
