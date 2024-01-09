@@ -1,0 +1,36 @@
+name: Feature Request
+description: File a feature request
+title: "[Enhancement]: "
+labels: ["enhancement"]
+
+body:
+  - type: markdown
+    attributes:
+      value: "Thanks for taking the time to fill out this feature request!"
+
+  - type: textarea
+    id: problem-description
+    attributes:
+      label: Problem description
+      description: Description of the problem that needs to be solved.
+      placeholder: What problem should be solved?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution-description
+    attributes:
+      label: Solution description
+      description: Description of a possible problem solution.
+      placeholder: Ideas for a solution?
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      description: Please check off the following checklist after you have performed the corresponding actions
+      options:
+        - label: I have checked for [existing Github issues](https://github.com/infinityofspace/certbot_dns_duckdns/labels/enhancement) and there are no issues for the same feature request.
+          required: true
