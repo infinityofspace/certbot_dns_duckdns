@@ -1,4 +1,4 @@
-FROM python:3.11-alpine3.17 AS build-image
+FROM python:3.12-alpine3.19 AS build-image
 
 RUN apk add --no-cache gcc musl-dev libffi-dev openssl-dev cargo git \
      && if [[ $(uname -m) == armv6* ||  $(uname -m) == armv7* ]]; then \
@@ -19,7 +19,7 @@ RUN pip install -r requirements.txt
 COPY . .
 RUN pip install .
 
-FROM python:3.11-alpine3.17
+FROM python:3.12-alpine3.19
 
 COPY --from=build-image /opt/venv /opt/venv
 
