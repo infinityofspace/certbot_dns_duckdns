@@ -5,10 +5,10 @@ confinement: strict
 grade: stable
 base: core24
 adopt-info: certbot-dns-duckdns
-architectures:
-  - build-on: amd64
-  - build-on: arm64
-  - build-on: armhf
+platforms:
+  amd64:
+  arm64:
+  armhf:
 
 parts:
   certbot-dns-duckdns:
