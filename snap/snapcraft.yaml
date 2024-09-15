@@ -3,7 +3,7 @@ summary: DuckDNS Authenticator plugin for Certbot
 description: DuckDNS Authenticator plugin for Certbot
 confinement: strict
 grade: stable
-base: core20
+base: core24
 adopt-info: certbot-dns-duckdns
 architectures:
   - build-on: amd64
@@ -15,8 +15,8 @@ parts:
     plugin: python
     source: .
     override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version `grep ^__version__ $SNAPCRAFT_PART_SRC/certbot_dns_duckdns/__init__.py | cut -f2 -d= | tr -d "\"[:space:]\""`
+      craftctl default
+      craftctl set version=\$(grep ^__version__ $SNAPCRAFT_PART_SRC/certbot_dns_duckdns/__init__.py | cut -f2 -d= | tr -d "\"[:space:]\"")
     build-environment:
       - SNAP_BUILD: "True"
     requirements:
@@ -34,7 +34,7 @@ parts:
     source: .
     stage: [ setup.py, certbot-shared ]
     override-pull: |
-      snapcraftctl pull
+      craftctl default
       mkdir -p $SNAPCRAFT_PART_SRC/certbot-shared
 
 slots:
@@ -42,7 +42,7 @@ slots:
     interface: content
     content: certbot-1
     read:
-      - $SNAP/lib/python3.8/site-packages
+      - $SNAP/lib/python3.12/site-packages
 
 plugs:
   certbot-metadata:

@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
-import certbot_dns_duckdns
+from certbot_dns_duckdns import __version__
 
 with open("Readme.md") as f:
     long_description = f.read()
 
 setup(
     name="certbot_dns_duckdns",
-    version=certbot_dns_duckdns.__version__,
+    version=__version__,
     author="infinityofspace",
     url="https://github.com/infinityofspace/certbot_dns_duckdns",
     description="Obtain certificates using a DNS TXT record for DuckDNS domains",
@@ -17,7 +17,6 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -29,9 +28,9 @@ setup(
         "Topic :: System :: Systems Administration"
     ],
     packages=find_packages(),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
-        "certbot>=1.18.0,<3.0",
+        "certbot~=3.0",
         "requests>=2.20.0,<3.0",
         "dnspython>=2.0.0,<3.0"
     ],
