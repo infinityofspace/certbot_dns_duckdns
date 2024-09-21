@@ -16,7 +16,7 @@ parts:
     source: .
     override-pull: |
       craftctl default
-      craftctl set version=\$(grep ^__version__ $SNAPCRAFT_PART_SRC/certbot_dns_duckdns/__init__.py | cut -f2 -d= | tr -d "\"[:space:]\"")
+      craftctl set version=$(grep ^__version__ \$SNAPCRAFT_PART_SRC/certbot_dns_duckdns/__init__.py | cut -f2 -d= | tr -d "\"[:space:]\"")
     build-environment:
       - SNAP_BUILD: "True"
     python-requirements:
