@@ -9,6 +9,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+      contents: read
+      attestations: write
+
     steps:
       - name: checkout code
         uses: actions/checkout@v4
@@ -33,6 +39,7 @@ jobs:
           password: ${{ secrets.GH_TOKEN }}
 
       - name: Build and push
+        id: build-push
         uses: docker/build-push-action@v6
         with:
           push: true
@@ -42,3 +49,10 @@ jobs:
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attest
+        with:
+          subject-name: ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns
+          subject-digest: ${{ steps.build-push.outputs.digest }}
+          push-to-registry: true
