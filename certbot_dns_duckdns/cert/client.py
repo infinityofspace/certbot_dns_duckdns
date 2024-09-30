@@ -1,3 +1,5 @@
+import os
+
 from certbot import errors
 from certbot.plugins import dns_common
 from dns import resolver
@@ -8,6 +10,8 @@ from certbot_dns_duckdns.duckdns.client import DuckDNSClient, NotValidDuckdnsDom
 DEFAULT_PROPAGATION_SECONDS = 30
 TXT_MAX_LEN = 255
 ACME_CHALLENGE_TXT_PREFIX = "_acme-challenge"
+
+TOKEN_ENV_NAME = "DUCKDNS_TOKEN"
 
 
 class Authenticator(dns_common.DNSAuthenticator):
@@ -32,6 +36,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         super(Authenticator, cls).add_parser_arguments(add, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS)
         add("credentials", help="DuckDNS credentials INI file.")
         add("token", help="DuckDNS token (overwrites credentials file)")
+        add("token-env", default=TOKEN_ENV_NAME, help="Environment variable name for the DuckDNS token")
         add("no-txt-restore",
             default=False,
             action="store_true",
@@ -51,16 +56,23 @@ class Authenticator(dns_common.DNSAuthenticator):
         if self.conf("token"):
             return
 
-        self._configure_file('credentials',
-                             'DuckDNS credentials INI file')
-        dns_common.validate_file_permissions(self.conf('credentials'))
-        self.credentials = self._configure_credentials(
-            "credentials",
-            "DuckDNS credentials INI file",
-            {
-                "token": "DuckDNS token",
-            },
-        )
+        credentials_file = self.conf("credentials")
+        if credentials_file:
+            self._configure_file("credentials",
+                                 "DuckDNS credentials INI file")
+            dns_common.validate_file_permissions(credentials_file)
+            self.credentials = self._configure_credentials(
+                "credentials",
+                "DuckDNS credentials INI file",
+                {
+                    "token": "DuckDNS token",
+                },
+            )
+        else:
+            # If no credentials file is provided, we try to get the token from the environment
+            token = os.environ.get(self.conf("token-env"))
+            if not token:
+                raise errors.PluginError("No DuckDNS token found.")
 
     def _perform(self, domain: str, validation_name: str, validation: str) -> None:
         """

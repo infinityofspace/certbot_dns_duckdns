@@ -115,7 +115,7 @@ domain._
 **Note that the certificate generation through Letsencrypt has rate limits. For testing, use the additional
 argument `--staging` to solve this problem.**
 
-#### Credentials file or cli parameters
+#### DuckDNS Token
 
 You can either use cli parameters to pass authentication information to certbot:
 
@@ -139,6 +139,14 @@ And then instead of using the `--dns-duckdns-key` parameter above you can use
 ```
 
 You can also mix these usages, though the cli parameters always take precedence over the ini file.
+
+Moreover, if your do not specify the `--dns-duckdns-token` or `--dns-duckdns-credentials` parameter, then the plugin
+will try to read the token from the environment variable `DUCKDNS_TOKEN`.
+The priority of the token is as follows:
+
+- cli parameter
+- credentials file
+- environment variable
 
 #### Local installation usage
 
@@ -251,19 +259,22 @@ certbot certonly \
 
 ---
 
-DNS-01 Challenges allow using CNAME records or NS records to delegate the challenge response to other DNS zones. 
+DNS-01 Challenges allow using CNAME records or NS records to delegate the challenge response to other DNS zones.
 For example, this allows you to resolve the DNS challenge for another provider's domain using a duckdns domain.
 For example, we have `abc.duckdns.org` as duckdns domain and `example.com` as our other domain.
 We might have an existing DNS configuration which look like this:
+
 ```commandline
 one.example.com. 600 IN CNAME two.example.com.
 two.example.com. 600 IN CNAME abc.duckdns.org.
 ```
+
 It chains `one.example.com` to `two.example.com` and finally to `abc.duckdns.org`.
 
 Now we want to issue a DNS-01 challenge for the subdomain "test.example.com".
 So we create a CNAME record for "_acme-challenge.test.example.com" pointing to "one.example.com".
 The DNS records now look like this:
+
 ```commandline
 _acme-challenge.test.example.com. 600 IN CNAME one.example.com.
 one.example.com. 600 IN CNAME two.example.com.
@@ -285,6 +296,7 @@ certbot certonly \
 ```
 
 What happens in the background can be seen very well in the DNS records:
+
 ```commandline
 _acme-challenge.test.example.com. 600 IN CNAME one.example.com.
 one.example.com. 600 IN CNAME two.example.com.
@@ -293,11 +305,11 @@ abc.duckdns.org. 60 TXT "asduh9asudhßa97sdhap9sudaisudoi"
 ```
 
 When validating the DNS challenge value, all CNAME records are now traversed.
-It starts with `_acme-challenge.test.example.com` and goes to `one.example.com`, then to `two.example.com` and finally 
+It starts with `_acme-challenge.test.example.com` and goes to `one.example.com`, then to `two.example.com` and finally
 to `abc.duckdns.org`. Here is the validation token stored as TXT record.
 
-The example could also be shortened by directly creating a CNAME entry from `_acme-challenge.test.example.com` to 
-`abc.duckdns.org`. So we skip all other CNAME records in between. To make it clear that any CNAME records are traversed 
+The example could also be shortened by directly creating a CNAME entry from `_acme-challenge.test.example.com` to
+`abc.duckdns.org`. So we skip all other CNAME records in between. To make it clear that any CNAME records are traversed
 during validation, the intermediate parts are added in the previous example.
 
 ---
@@ -381,12 +393,12 @@ You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duc
 
 All modules used by this project are listed below:
 
-| Name                                                               | License                                                                                       |
-|:------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------:|
-| [certbot](https://github.com/certbot/certbot)                      | [Apache 2.0](https://raw.githubusercontent.com/certbot/certbot/master/LICENSE.txt)            |
-| [requests](https://github.com/psf/requests)                        | [Apache 2.0](https://raw.githubusercontent.com/psf/requests/master/LICENSE)                   |
-| [setuptools](https://github.com/pypa/setuptools)                   | [MIT](https://raw.githubusercontent.com/pypa/setuptools/main/LICENSE)                         |
-| [dnspython](https://github.com/rthalley/dnspython)                 | [ISC](https://raw.githubusercontent.com/rthalley/dnspython/master/LICENSE)                    |
+|                        Name                        |                                      License                                       |
+|:--------------------------------------------------:|:----------------------------------------------------------------------------------:|
+|   [certbot](https://github.com/certbot/certbot)    | [Apache 2.0](https://raw.githubusercontent.com/certbot/certbot/master/LICENSE.txt) |
+|    [requests](https://github.com/psf/requests)     |    [Apache 2.0](https://raw.githubusercontent.com/psf/requests/master/LICENSE)     |
+|  [setuptools](https://github.com/pypa/setuptools)  |       [MIT](https://raw.githubusercontent.com/pypa/setuptools/main/LICENSE)        |
+| [dnspython](https://github.com/rthalley/dnspython) |     [ISC](https://raw.githubusercontent.com/rthalley/dnspython/master/LICENSE)     |
 
 Furthermore, this readme file contains embeddings of [Shields.io](https://github.com/badges/shields).
 
