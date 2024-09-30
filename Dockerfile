@@ -15,8 +15,11 @@ RUN pip install .
 
 FROM python:3.12-alpine3.19
 
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 COPY --from=build-image /opt/venv /opt/venv
 
 ENV PATH="/opt/venv/bin:$PATH"
 
-ENTRYPOINT ["certbot"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

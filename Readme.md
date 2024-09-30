@@ -370,6 +370,12 @@ This will start a temporary docker container every 8 days at 3am and tries to re
 
 An example for the usage with docker-compose can be found [here](docker/simple/Readme.md).
 
+##### Docker secrets
+
+The docker image supports the use of docker secrets. Create a secret with the default name `DUCKDNS_TOKEN` or a custom
+name specified in the parameter `--dns-duckdns-token-env` and do not provide the `--dns-duckdns-token` or
+`--dns-duckdns-credentials` parameter. The image will automatically read the secret and use it.
+
 #### Plugin arguments
 
 ```commandline
@@ -381,6 +387,8 @@ Obtain certificates using a DNS TXT record for DuckDNS domains
                         DuckDNS credentials INI file. (default: None)
   --dns-duckdns-token DNS_DUCKDNS_TOKEN
                         DuckDNS token (overwrites credentials file) (default: None)
+  --dns-duckdns-token-env DNS_DUCKDNS_TOKEN_ENV
+                        Environment variable name for the DuckDNS token (default: DUCKDNS_TOKEN)
   --dns-duckdns-no-txt-restore
                         Do not restore the original TXT record (default: False)
 ```
