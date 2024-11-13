@@ -26,18 +26,18 @@ setup(
         "Topic :: Security",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Utilities",
-        "Topic :: System :: Systems Administration"
+        "Topic :: System :: Systems Administration",
     ],
     packages=find_packages(),
     python_requires=">=3.9",
     install_requires=[
         "certbot>=1.18.0,<4.0",
         "requests>=2.20.0,<3.0",
-        "dnspython>=2.0.0,<3.0"
+        "dnspython>=2.0.0,<3.0",
     ],
     entry_points={
         "certbot.plugins": [
             "dns-duckdns = certbot_dns_duckdns.cert.client:Authenticator",
         ]
-    }
+    },
 )

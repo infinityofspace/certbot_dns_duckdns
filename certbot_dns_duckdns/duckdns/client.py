@@ -7,8 +7,12 @@ import requests
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 BASE_URL = "https://www.duckdns.org/update"
-VALID_DUCKDNS_DOMAIN_REGEX = re.compile(r"^([a-z\d\\-]+\.)*[a-z\d\\-]+(\.duckdns\.org)?$")
-VALID_FULL_DUCKDNS_DOMAIN_REGEX = re.compile(r"^([a-z\d\\-]+\.)*[a-z\d\\-]+\.duckdns\.org$")
+VALID_DUCKDNS_DOMAIN_REGEX = re.compile(
+    r"^([a-z\d\\-]+\.)*[a-z\d\\-]+(\.duckdns\.org)?$"
+)
+VALID_FULL_DUCKDNS_DOMAIN_REGEX = re.compile(
+    r"^([a-z\d\\-]+\.)*[a-z\d\\-]+\.duckdns\.org$"
+)
 
 
 def is_valid_duckdns_domain(domain):
@@ -23,6 +27,7 @@ class TXTUpdateError(Exception):
     """
     Exception if during the TXT record changing something goes wrong.
     """
+
     pass
 
 
@@ -33,7 +38,7 @@ class NotValidDuckdnsDomainError(Exception):
 
     def __init__(self, domain):
         self.domain = domain
-        self.message = f"The domain \"{domain}\" is not valid a duckdns subdomain."
+        self.message = f'The domain "{domain}" is not valid a duckdns subdomain.'
         super().__init__(self.message)
 
 
@@ -81,17 +86,15 @@ class DuckDNSClient:
 
         root_domain = self.__get_validated_root_domain__(domain)
 
-        params = {
-            "token": self._token,
-            "domains": root_domain,
-            "txt": txt
-        }
+        params = {"token": self._token, "domains": root_domain, "txt": txt}
         r = requests.get(url=BASE_URL, params=params)
 
         if r.text != "OK":
-            raise TXTUpdateError("The TXT update \"{}\" for domain \"{}\" could not be set.\n"
-                                 "Request status code: {}\n"
-                                 "Request response text: {}".format(txt, domain, r.status_code, r.text))
+            raise TXTUpdateError(
+                'The TXT update "{}" for domain "{}" could not be set.\n'
+                "Request status code: {}\n"
+                "Request response text: {}".format(txt, domain, r.status_code, r.text)
+            )
 
     @staticmethod
     def __get_validated_root_domain__(domain):
@@ -131,11 +134,13 @@ class DuckDNSClient:
             "token": self._token,
             "domains": root_domain,
             "txt": "",
-            "clear": "true"
+            "clear": "true",
         }
         r = requests.get(url=BASE_URL, params=params)
 
         if r.text != "OK":
-            raise TXTUpdateError("The clearing of the TXT record for domain \"{}\" was not successful.\n"
-                                 "Request status code: {}\n"
-                                 "Request response text: {}".format(domain, r.status_code, r.text))
+            raise TXTUpdateError(
+                'The clearing of the TXT record for domain "{}" was not successful.\n'
+                "Request status code: {}\n"
+                "Request response text: {}".format(domain, r.status_code, r.text)
+            )

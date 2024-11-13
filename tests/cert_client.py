@@ -35,9 +35,7 @@ class TestCertClient(unittest.TestCase):
 
         authenticator = Authenticator(config, name="duckdns")
 
-        authenticator._perform(
-            domain=domain, validation_name="", validation=txt_value
-        )
+        authenticator._perform(domain=domain, validation_name="", validation=txt_value)
 
     @responses.activate
     def test_invalid_auth(self):
@@ -127,6 +125,4 @@ class TestCertClient(unittest.TestCase):
 
         authenticator = Authenticator(config, name="duckdns")
 
-        authenticator._cleanup(
-            domain=domain, validation_name="", validation=txt_value
-        )
+        authenticator._cleanup(domain=domain, validation_name="", validation=txt_value)
