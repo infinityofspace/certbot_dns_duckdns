@@ -3,3 +3,4 @@ requests>=2.20.0,<3.0
 certbot>=1.18.0,<4.0
 dnspython>=2.0.0,<3.0
 responses~=0.25
+ruff~=0.7

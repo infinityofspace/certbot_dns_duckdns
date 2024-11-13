@@ -28,8 +28,11 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
     3. [Docker usage](#docker-usage)
     4. [Plugin arguments](#plugin-arguments)
 4. [FAQ](#faq)
-5. [Third party notices](#third-party-notices)
-6. [License](#license)
+5. [Development](#development)
+    1. [Setup environment](#setup-environment)
+    2. [Tests](#tests)
+6. [Third party notices](#third-party-notices)
+7. [License](#license)
 
 ---
 
@@ -396,6 +399,42 @@ Obtain certificates using a DNS TXT record for DuckDNS domains
 ### FAQ
 
 You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duckdns/wiki/FAQ).
+
+### Development
+
+#### Setup environment
+
+First get the source code:
+
+```commandline
+git clone https://github.com/infinityofspace/certbot_dns_porkbun.git
+cd certbot_dns_porkbun
+```
+
+Now create a virtual environment, activate it and install all dependencies with the following commands:
+
+```commandline
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+```
+
+Now you can start developing.
+
+Feel free to contribute to this project by creating a pull request.
+Before you create a pull request, make sure that you code meets the following requirements (you can use the specified
+commands to check/fulfill the requirements):
+
+- check unit tests: `python -m unittest tests/*.py`
+- format the code: `ruff format`
+
+#### Tests
+
+You can run the tests with the following command:
+
+```commandline
+python -m unittest tests/*.py
+```
 
 ### Third party notices
 

@@ -4,8 +4,11 @@ from certbot import errors
 from certbot.plugins import dns_common
 from dns import resolver
 
-from certbot_dns_duckdns.duckdns.client import DuckDNSClient, NotValidDuckdnsDomainError, \
-    is_valid_full_duckdns_domain
+from certbot_dns_duckdns.duckdns.client import (
+    DuckDNSClient,
+    NotValidDuckdnsDomainError,
+    is_valid_full_duckdns_domain,
+)
 
 DEFAULT_PROPAGATION_SECONDS = 30
 TXT_MAX_LEN = 255
@@ -33,14 +36,22 @@ class Authenticator(dns_common.DNSAuthenticator):
         :param add: method handling the argument adding to the cli
         """
 
-        super(Authenticator, cls).add_parser_arguments(add, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS)
+        super(Authenticator, cls).add_parser_arguments(
+            add, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS
+        )
         add("credentials", help="DuckDNS credentials INI file.")
         add("token", help="DuckDNS token (overwrites credentials file)")
-        add("token-env", default=TOKEN_ENV_NAME, help="Environment variable name for the DuckDNS token")
-        add("no-txt-restore",
+        add(
+            "token-env",
+            default=TOKEN_ENV_NAME,
+            help="Environment variable name for the DuckDNS token",
+        )
+        add(
+            "no-txt-restore",
             default=False,
             action="store_true",
-            help="Do not restore the original TXT record")
+            help="Do not restore the original TXT record",
+        )
 
     def more_info(self) -> str:
         """
@@ -58,8 +69,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         credentials_file = self.conf("credentials")
         if credentials_file:
-            self._configure_file("credentials",
-                                 "DuckDNS credentials INI file")
+            self._configure_file("credentials", "DuckDNS credentials INI file")
             dns_common.validate_file_permissions(credentials_file)
             self.credentials = self._configure_credentials(
                 "credentials",
@@ -126,7 +136,9 @@ class Authenticator(dns_common.DNSAuthenticator):
                 # setting an empty TXT value does not work with the DuckDNS API
                 self._get_duckdns_client().clear_txt_record(duckdns_domain)
             else:
-                self._get_duckdns_client().set_txt_record(duckdns_domain, self.old_txt_value)
+                self._get_duckdns_client().set_txt_record(
+                    duckdns_domain, self.old_txt_value
+                )
         except Exception as e:
             raise errors.PluginError(e)
 
@@ -155,8 +167,8 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         # delegated acme challenge (ipv4)
         try:
-            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", 'A')
-            delegated_domain = result.canonical_name.to_text().rstrip('.')
+            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A")
+            delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
             if is_valid_full_duckdns_domain(delegated_domain):
@@ -168,8 +180,8 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         # delegated acme challenge (ipv6)
         try:
-            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", 'AAAA')
-            delegated_domain = result.canonical_name.to_text().rstrip('.')
+            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA")
+            delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
             if is_valid_full_duckdns_domain(delegated_domain):
@@ -180,6 +192,8 @@ class Authenticator(dns_common.DNSAuthenticator):
             pass
 
         # invalid domain
-        e = Exception(f"The given domain \"{domain}\" is neither a duckdns subdomain nor "
-                      f" delegates _acme-challenge.{domain} to a duckdns subdomain.")
+        e = Exception(
+            f'The given domain "{domain}" is neither a duckdns subdomain nor '
+            f" delegates _acme-challenge.{domain} to a duckdns subdomain."
+        )
         raise errors.PluginError(e)
