@@ -407,7 +407,7 @@ You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duc
 First get the source code:
 
 ```commandline
-git clone https://github.com/infinityofspace/certbot_dns_porkbun.git
+git clone https://github.com/infinityofspace/certbot_dns_duckdns.git
 cd certbot_dns_porkbun
 ```
 
@@ -416,7 +416,7 @@ Now create a virtual environment, activate it and install all dependencies with 
 ```commandline
 python3 -m venv venv
 source venv/bin/activate
-pip3 install -r requirements.txt
+pip3 install -r requirements-dev.txt
 ```
 
 Now you can start developing.
@@ -427,6 +427,11 @@ commands to check/fulfill the requirements):
 
 - check unit tests: `python -m unittest tests/*.py`
 - format the code: `ruff format`
+- lint the code:
+```commandline
+flake8 certbot_dns_duckdns --count --ignore E501 --show-source --statistics
+pylint certbot_dns_duckdns --disable C0301
+```
 
 #### Tests
 

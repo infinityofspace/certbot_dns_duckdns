@@ -1,3 +1,7 @@
+"""
+This module provides a client for clearing, setting and receiving the TXT record for DuckDNS domains.
+"""
+
 import logging
 import re
 
@@ -16,10 +20,26 @@ VALID_FULL_DUCKDNS_DOMAIN_REGEX = re.compile(
 
 
 def is_valid_duckdns_domain(domain):
+    """
+    Check if the domain is a valid duckdns subdomain.
+
+    :param domain: the domain to check
+
+    :return: True if the domain is a valid duckdns subdomain, otherwise False
+    """
+
     return VALID_DUCKDNS_DOMAIN_REGEX.match(domain) is not None
 
 
 def is_valid_full_duckdns_domain(domain):
+    """
+    Check if the domain is a valid duckdns domain with the '.duckdns.org' suffix.
+
+    :param domain: the domain to check
+
+    :return: True if the domain is a valid duckdns domain, otherwise False
+    """
+
     return VALID_FULL_DUCKDNS_DOMAIN_REGEX.match(domain) is not None
 
 
@@ -28,7 +48,34 @@ class TXTUpdateError(Exception):
     Exception if during the TXT record changing something goes wrong.
     """
 
-    pass
+    template_txt_set = (
+        'The TXT update "{txt}" for domain "{domain}" could not be set.\n'
+        "Request status code: {status_code}\n"
+        "Request response text: {response}"
+    )
+
+    template_txt_delete = (
+        'The TXT value for domain "{domain}" could not be deleted.\n'
+        "Request status code: {status_code}\n"
+        "Request response text: {response}"
+    )
+
+    def __init__(self, domain, status_code, response, txt=None):
+        self.txt = txt
+        self.domain = domain
+        self.status_code = status_code
+        self.response = response
+
+        if txt:
+            self.message = self.template_txt_set.format(
+                domain=domain, status_code=status_code, response=response, txt=txt
+            )
+        else:
+            self.message = self.template_txt_delete.format(
+                domain=domain, status_code=status_code, response=response
+            )
+
+        super().__init__(self.message)
 
 
 class NotValidDuckdnsDomainError(Exception):
@@ -69,13 +116,14 @@ class DuckDNSClient:
 
         self._token = token
 
-    def set_txt_record(self, domain: str, txt: str) -> None:
+    def set_txt_record(self, domain: str, txt: str, timeout: int = 600) -> None:
         """
         Set a TXT record value for a specific DuckDNS domain.
 
         :param domain: the full domain or only the subdomain of duckdns
             (e.g. example of the full domain example.duckdns.org) for which the value of the TXT entry should set
         :param txt: the string value to set as TXT record
+        :param timeout: the timeout for the request in seconds
 
         :raise TXTUpdateError: if the TXT record can not be set
         :raise NotValidDuckdnsDomainError: if the domain is not a valid duckdns domain
@@ -87,14 +135,10 @@ class DuckDNSClient:
         root_domain = self.__get_validated_root_domain__(domain)
 
         params = {"token": self._token, "domains": root_domain, "txt": txt}
-        r = requests.get(url=BASE_URL, params=params)
+        r = requests.get(url=BASE_URL, params=params, timeout=timeout)
 
         if r.text != "OK":
-            raise TXTUpdateError(
-                'The TXT update "{}" for domain "{}" could not be set.\n'
-                "Request status code: {}\n"
-                "Request response text: {}".format(txt, domain, r.status_code, r.text)
-            )
+            raise TXTUpdateError(txt, domain, r.status_code, r.text)
 
     @staticmethod
     def __get_validated_root_domain__(domain):
@@ -114,12 +158,13 @@ class DuckDNSClient:
 
         return root_domain
 
-    def clear_txt_record(self, domain: str) -> None:
+    def clear_txt_record(self, domain: str, timeout: int = 600) -> None:
         """
         Clear the TXT record for a specific DuckDNS domain.
 
         :param domain: the full domain or only the subdomain of duckdns
             (e.g. example of the full domain example.duckdns.org) for which the TXT entry should be cleared
+        :param timeout: the timeout for the request in seconds
 
         :raise TXTUpdateError: if the TXT record can not be cleared
         :raise NotValidDuckdnsDomainError: if the domain is not a valid duckdns domain
@@ -136,11 +181,7 @@ class DuckDNSClient:
             "txt": "",
             "clear": "true",
         }
-        r = requests.get(url=BASE_URL, params=params)
+        r = requests.get(url=BASE_URL, params=params, timeout=timeout)
 
         if r.text != "OK":
-            raise TXTUpdateError(
-                'The clearing of the TXT record for domain "{}" was not successful.\n'
-                "Request status code: {}\n"
-                "Request response text: {}".format(domain, r.status_code, r.text)
-            )
+            raise TXTUpdateError(domain, r.status_code, r.text, None)
