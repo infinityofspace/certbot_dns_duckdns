@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  linting-requirements-install:
+  linting:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -19,41 +19,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: install linting requirements
-        run: |
-          pip install --upgrade pip
-          pip install flake8 pylint
-
       - name: Install project requirements
-        run: pip install -r requirements.txt
-
-      - name: Lint with flake8
-        run: flake8 certbot_dns_duckdns --count --ignore E501 --show-source --statistics
-
-      - name: Lint with pylint
-        run: pylint certbot_dns_duckdns --disable C0301
-
-  linting-setup-install:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [ "3.9", "3.10", "3.11", "3.12", "3.13"  ]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: install linting requirements
-        run: |
-          pip install --upgrade pip
-          pip install flake8 pylint
-
-      - name: Install project
-        run: pip install .
+        run: pip install -r requirements-dev.txt
 
       - name: Lint with flake8
         run: flake8 certbot_dns_duckdns --count --ignore E501 --show-source --statistics
