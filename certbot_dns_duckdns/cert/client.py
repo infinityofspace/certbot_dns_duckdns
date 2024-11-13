@@ -1,3 +1,7 @@
+"""
+The certbot Authenticator implementation for DuckDNS domains.
+"""
+
 import os
 
 from certbot import errors
@@ -23,13 +27,17 @@ class Authenticator(dns_common.DNSAuthenticator):
     """
 
     description = "Obtain certificates using a DNS TXT record for DuckDNS domains"
-    old_txt_value = ""
 
     def __init__(self, *args, **kwargs) -> None:
-        super(Authenticator, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+
+        self._old_txt_value = ""
+        self._credentials = None
 
     @classmethod
-    def add_parser_arguments(cls, add: callable) -> None:
+    def add_parser_arguments(
+        cls, add: callable, default_propagation_seconds=DEFAULT_PROPAGATION_SECONDS
+    ) -> None:
         """
         Add required or optional argument for the cli of certbot.
 
@@ -71,7 +79,7 @@ class Authenticator(dns_common.DNSAuthenticator):
         if credentials_file:
             self._configure_file("credentials", "DuckDNS credentials INI file")
             dns_common.validate_file_permissions(credentials_file)
-            self.credentials = self._configure_credentials(
+            self._credentials = self._configure_credentials(
                 "credentials",
                 "DuckDNS credentials INI file",
                 {
@@ -110,7 +118,7 @@ class Authenticator(dns_common.DNSAuthenticator):
                 raise errors.PluginError("issue resoling TXT record")
 
             # remove the additional quotes around the TXT value
-            self.old_txt_value = txt_values[0].to_text()[1:-1]
+            self._old_txt_value = txt_values[0].to_text()[1:-1]
 
         try:
             self._get_duckdns_client().set_txt_record(duckdns_domain, validation)
@@ -132,12 +140,12 @@ class Authenticator(dns_common.DNSAuthenticator):
         duckdns_domain = self._get_duckdns_domain(domain)
 
         try:
-            if self.old_txt_value == "":
+            if self._old_txt_value == "":
                 # setting an empty TXT value does not work with the DuckDNS API
                 self._get_duckdns_client().clear_txt_record(duckdns_domain)
             else:
                 self._get_duckdns_client().set_txt_record(
-                    duckdns_domain, self.old_txt_value
+                    duckdns_domain, self._old_txt_value
                 )
         except Exception as e:
             raise errors.PluginError(e)
@@ -148,7 +156,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         :return: the created DuckDNSClient object
         """
-        token = self.conf("token") or self.credentials.conf("token")
+        token = self.conf("token") or self._credentials.conf("token")
         return DuckDNSClient(token)
 
     def _get_duckdns_domain(self, domain: str) -> str:
@@ -173,9 +181,9 @@ class Authenticator(dns_common.DNSAuthenticator):
             # check if the delegated domain is a valid duckdns.org domain
             if is_valid_full_duckdns_domain(delegated_domain):
                 return delegated_domain
-            else:
-                raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
-        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+
+            raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
+        except (resolver.NXDOMAIN, resolver.NoAnswer):
             pass
 
         # delegated acme challenge (ipv6)
@@ -186,9 +194,9 @@ class Authenticator(dns_common.DNSAuthenticator):
             # check if the delegated domain is a valid duckdns.org domain
             if is_valid_full_duckdns_domain(delegated_domain):
                 return delegated_domain
-            else:
-                raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
-        except (resolver.NXDOMAIN, resolver.NoAnswer) as e:
+
+            raise errors.PluginError(NotValidDuckdnsDomainError(delegated_domain))
+        except (resolver.NXDOMAIN, resolver.NoAnswer):
             pass
 
         # invalid domain
