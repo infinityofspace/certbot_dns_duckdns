@@ -2,6 +2,11 @@ name: docker release
 
 on:
   workflow_dispatch:
+    inputs:
+        no-cache:
+          description: "Disable Docker build cache"
+          required: false
+          default: "false"
   push:
     tags:
       - "v*"
@@ -45,6 +50,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
+          no-cache: ${{ inputs.no-cache || 'false' }}
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:unstable
             ${{ secrets.DOCKER_USERNAME }}/certbot_dns_duckdns:latest
@@ -55,6 +61,7 @@ jobs:
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64/v8
           cache-from: type=gha
           cache-to: type=gha,mode=max
+  
       - name: Attest
         uses: actions/attest-build-provenance@v1
         id: attest
