@@ -28,7 +28,7 @@ setup(
         "Topic :: Utilities",
         "Topic :: System :: Systems Administration",
     ],
-    packages=find_packages(),
+    packages=find_packages(exclude=["tests"]),
     python_requires=">=3.9",
     install_requires=[
         "certbot>=1.18.0,<4.0",
