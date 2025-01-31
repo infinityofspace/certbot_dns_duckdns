@@ -109,7 +109,7 @@ class Authenticator(dns_common.DNSAuthenticator):
             # get the current TXT record
             custom_resolver = resolver.Resolver()
             try:
-                txt_values = custom_resolver.resolve(duckdns_domain, "TXT")
+                txt_values = custom_resolver.query(duckdns_domain, "TXT")
             except Exception as e:
                 raise errors.PluginError(e)
 
@@ -175,7 +175,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         # delegated acme challenge (ipv4)
         try:
-            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A")
+            result = resolver.query(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A")
             delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
@@ -188,7 +188,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         # delegated acme challenge (ipv6)
         try:
-            result = resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA")
+            result = resolver.query(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA")
             delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
