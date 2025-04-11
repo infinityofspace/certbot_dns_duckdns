@@ -398,7 +398,7 @@ Obtain certificates using a DNS TXT record for DuckDNS domains
 
 ### FAQ
 
-You can the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duckdns/wiki/FAQ).
+You can read the FAQ in the [wiki](https://github.com/infinityofspace/certbot_dns_duckdns/wiki/FAQ).
 
 ### Development
 
