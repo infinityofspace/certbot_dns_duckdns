@@ -33,6 +33,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         self._old_txt_value = ""
         self._credentials = None
+        self._token = None
 
     @classmethod
     def add_parser_arguments(
