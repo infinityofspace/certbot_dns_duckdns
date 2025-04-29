@@ -34,6 +34,7 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         self._old_txt_value = ""
         self._credentials = None
+        self._token = None
 
     @classmethod
     def add_parser_arguments(
@@ -73,7 +74,8 @@ class Authenticator(dns_common.DNSAuthenticator):
 
     def _setup_credentials(self) -> None:
         # If token cli param is provided we do not need a credentials file
-        if self.conf("token"):
+        self._token = self.conf("token")
+        if self._token:
             return
 
         credentials_file = self.conf("credentials")
@@ -92,6 +94,8 @@ class Authenticator(dns_common.DNSAuthenticator):
             token = os.environ.get(self.conf("token-env"))
             if not token:
                 raise errors.PluginError("No DuckDNS token found.")
+
+            self._token = token
 
     def _perform(self, domain: str, validation_name: str, validation: str) -> None:
         """
@@ -160,7 +164,12 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         :return: the created DuckDNSClient object
         """
-        token = self.conf("token") or self._credentials.conf("token")
+        token = self.conf("token")
+        if not token and self._credentials is not None:
+            token = self._credentials.conf("token")
+        else:
+            token = self._token
+
         return DuckDNSClient(token)
 
     def _get_duckdns_domain(self, domain: str) -> str:
