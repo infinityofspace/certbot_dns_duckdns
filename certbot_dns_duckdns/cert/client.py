@@ -189,9 +189,13 @@ class Authenticator(dns_common.DNSAuthenticator):
         # delegated acme challenge (ipv4)
         try:
             if dns.version.MAJOR > 1:
-                result = dns.resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A")
+                result = dns.resolver.resolve(
+                    f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A"
+                )
             else:
-                result = dns.resolver.query(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A")
+                result = dns.resolver.query(
+                    f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "A"
+                )
             delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
@@ -205,9 +209,13 @@ class Authenticator(dns_common.DNSAuthenticator):
         # delegated acme challenge (ipv6)
         try:
             if dns.version.MAJOR > 1:
-                result = dns.resolver.resolve(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA")
+                result = dns.resolver.resolve(
+                    f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA"
+                )
             else:
-                result = dns.resolver.query(f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA")
+                result = dns.resolver.query(
+                    f"{ACME_CHALLENGE_TXT_PREFIX}.{domain}", "AAAA"
+                )
             delegated_domain = result.canonical_name.to_text().rstrip(".")
 
             # check if the delegated domain is a valid duckdns.org domain
