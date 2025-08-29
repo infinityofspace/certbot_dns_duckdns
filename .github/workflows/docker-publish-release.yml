@@ -63,7 +63,7 @@ jobs:
           cache-to: type=gha,mode=max
   
       - name: Attest
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v3
         id: attest
         with:
           subject-name: ghcr.io/${{ secrets.GH_USERNAME }}/certbot_dns_duckdns
