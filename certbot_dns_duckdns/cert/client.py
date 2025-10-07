@@ -164,10 +164,11 @@ class Authenticator(dns_common.DNSAuthenticator):
 
         :return: the created DuckDNSClient object
         """
-        token = self.conf("token")
-        if not token and self._credentials is not None:
-            token = self._credentials.conf("token")
-        else:
+
+        token = self.conf("token") or (
+            self._credentials.conf("token") if self._credentials else None
+        )
+        if not token:
             token = self._token
 
         return DuckDNSClient(token)
