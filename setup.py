@@ -31,7 +31,7 @@ setup(
     packages=find_packages(exclude=["tests"]),
     python_requires=">=3.10",
     install_requires=[
-        "certbot>=1.18.0,<5.0",
+        "certbot>=1.18.0,<6.0",
         "requests>=2.20.0,<3.0",
         "dnspython>=2.0.0,<3.0",
     ],
