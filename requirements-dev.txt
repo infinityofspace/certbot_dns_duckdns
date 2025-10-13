@@ -2,4 +2,4 @@
 responses~=0.25
 ruff~=0.13
 flake8~=7.3
-pylint~=3.3
+pylint~=4.0
