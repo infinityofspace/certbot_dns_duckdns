@@ -64,7 +64,7 @@ jobs:
           .
 
       - name: Upload distribution artifact for other jobs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: certbot_dns_duckdns_dist
           path: dist/
