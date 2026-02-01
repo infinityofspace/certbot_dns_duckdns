@@ -1,3 +1,3 @@
 """Certbot plugin for DNS-01 challenge using DuckDNS."""
 
-__version__ = "v1.7.1"
+__version__ = "v1.8.0"
