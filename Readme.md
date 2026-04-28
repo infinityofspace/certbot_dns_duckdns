@@ -38,7 +38,7 @@ Plugin for certbot for a DNS-01 challenge with a DuckDNS domain.
 
 ### About
 
-*certbot_dn_duckdns* is a plugin for [*certbot*](https://github.com/certbot/certbot) to create the DNS-01 challenge for
+*certbot_dns_duckdns* is a plugin for [*certbot*](https://github.com/certbot/certbot) to create the DNS-01 challenge for
 a DuckDNS domain. The plugin takes care of setting and deleting the TXT entry via the DuckDNS API.
 
 ### Installation
