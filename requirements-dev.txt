@@ -1,5 +1,5 @@
 -r requirements.txt
 responses~=0.25
-ruff~=0.14
+ruff~=0.15
 flake8~=7.3
 pylint~=4.0
