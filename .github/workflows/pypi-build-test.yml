@@ -7,6 +7,9 @@ on:
       - main
       - dev
 
+permissions:
+  contents: read
+
 jobs:
   linting-setup-install:
     runs-on: ubuntu-latest
