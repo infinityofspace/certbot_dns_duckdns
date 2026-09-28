@@ -1,5 +1,5 @@
 -r requirements.txt
 responses~=0.26
 ruff~=0.16
-flake8~=7.3
+flake8~=7.4
 pylint~=4.0
