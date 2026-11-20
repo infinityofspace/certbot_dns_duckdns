@@ -1,0 +1,66 @@
+name: docker architecture test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "Dockerfile"
+      - "requirements.txt"
+      - "setup.py"
+      - "certbot_dns_duckdns/**"
+      - ".github/workflows/docker-architecture-test.yml"
+  pull_request:
+    paths:
+      - "Dockerfile"
+      - "requirements.txt"
+      - "setup.py"
+      - "certbot_dns_duckdns/**"
+      - ".github/workflows/docker-architecture-test.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64/v8
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          load: true
+          tags: certbot_dns_duckdns:architecture-test
+
+      - name: Smoke test image
+        env:
+          TEST_IMAGE: certbot_dns_duckdns:architecture-test
+        run: |
+          docker_args=(--rm --platform "${{ matrix.platform }}")
+          if [[ "${{ matrix.platform }}" == "linux/arm/v6" ]]; then
+            # QEMU otherwise defaults to an ARMv7 CPU and can hide ARMv6-incompatible wheels.
+            docker_args+=(--env QEMU_CPU=arm1176)
+          fi
+
+          docker run "${docker_args[@]}" "$TEST_IMAGE" --version
+          docker run "${docker_args[@]}" \
+            --entrypoint /opt/venv/bin/python \
+            "$TEST_IMAGE" \
+            -c 'import certbot_dns_duckdns.cert.client; import charset_normalizer; charset_normalizer.from_bytes(b"architecture test").best()'

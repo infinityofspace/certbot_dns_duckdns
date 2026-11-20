@@ -17,11 +17,11 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: 3.14",
+        "Programming Language :: Python :: 3.15",
         "License :: OSI Approved :: MIT License",
         "Topic :: Security",
         "Topic :: Internet :: WWW/HTTP",
@@ -29,7 +29,7 @@ setup(
         "Topic :: System :: Systems Administration",
     ],
     packages=find_packages(exclude=["tests"]),
-    python_requires=">=3.10",
+    python_requires=">=3.11",
     install_requires=[
         "certbot>=1.18.0,<6.0",
         "requests>=2.20.0,<3.0",
